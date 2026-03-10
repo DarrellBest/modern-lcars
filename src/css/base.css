@@ -25,19 +25,36 @@ body {
   min-height: 100vh;
 }
 
+/* ── Ambient Background ─────────────────────────────────────
+   Subtle radial gradients give glass morphism something to
+   blur against. Without this, glass panels on pure black = invisible.
+   ─────────────────────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse at 15% 20%, rgba(244, 162, 97, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 30%, rgba(118, 199, 240, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(155, 114, 207, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 30% 60%, rgba(86, 227, 227, 0.02) 0%, transparent 40%);
+}
+
 /* ── Ambient Scan Line (subtle, modern) ─────────────────────── */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 9999;
+  z-index: var(--ml-z-scanline);
   background: repeating-linear-gradient(
     0deg,
     transparent,
     transparent 4px,
-    rgba(0, 0, 0, 0.03) 4px,
-    rgba(0, 0, 0, 0.03) 5px
+    rgba(0, 0, 0, 0.025) 4px,
+    rgba(0, 0, 0, 0.025) 5px
   );
   mix-blend-mode: overlay;
 }
@@ -48,24 +65,17 @@ body::after {
   color: var(--ml-text-bright);
 }
 
+/* ── Focus ──────────────────────────────────────────────────── */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ml-focus-ring);
+}
+
 /* ── Scrollbar ──────────────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--ml-deep);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--ml-overlay);
-  border-radius: var(--ml-radius-pill);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--ml-primary);
-}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--ml-deep); }
+::-webkit-scrollbar-thumb { background: var(--ml-overlay); border-radius: var(--ml-radius-pill); }
+::-webkit-scrollbar-thumb:hover { background: var(--ml-primary); }
 
 /* ── Typography Resets ──────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
@@ -88,9 +98,7 @@ a {
   transition: color var(--ml-duration-fast) var(--ml-ease-out);
 }
 
-a:hover {
-  color: var(--ml-cyan);
-}
+a:hover { color: var(--ml-cyan); }
 
 code, pre {
   font-family: var(--ml-font-mono);
@@ -103,6 +111,15 @@ pre {
   border-radius: var(--ml-radius-md);
   border: var(--ml-border-thin);
   overflow-x: auto;
+  color: var(--ml-ice);
+}
+
+code {
+  background: rgba(10, 22, 40, 0.8);
+  border: var(--ml-border-thin);
+  padding: 2px 6px;
+  border-radius: var(--ml-radius-sm);
+  color: var(--ml-ice);
 }
 
 /* ── Utility: Mono Label ────────────────────────────────────── */
@@ -118,4 +135,13 @@ pre {
   font-family: var(--ml-font-mono);
   font-weight: 500;
   color: var(--ml-gold);
+}
+
+/* ── Reduced Motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

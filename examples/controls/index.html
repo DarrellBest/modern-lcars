@@ -40,24 +40,27 @@
       align-items: center;
       margin-bottom: var(--ml-space-md);
     }
+    .tab-content { display: none; padding: var(--ml-space-md) 0; }
+    .tab-content.active { display: block; }
   </style>
 </head>
 <body>
   <div class="ml-app">
     <div class="ml-app__sidebar">
-      <div class="ml-sidebar">
-        <div class="ml-sidebar__block ml-sidebar__block--amber" style="flex:2">CLR</div>
-        <div class="ml-sidebar__block ml-sidebar__block--ice" style="flex:1">TYP</div>
-        <div class="ml-sidebar__block ml-sidebar__block--violet" style="flex:3">CMP</div>
-        <div class="ml-sidebar__block ml-sidebar__block--gold" style="flex:1">FRM</div>
-        <div class="ml-sidebar__block ml-sidebar__block--cyan" style="flex:2">ANI</div>
+      <div class="ml-sidebar ml-sidebar--wide">
+        <div class="ml-sidebar__block ml-sidebar__block--amber" style="flex:2">COLORS</div>
+        <div class="ml-sidebar__block ml-sidebar__block--ice" style="flex:1">TYPE</div>
+        <div class="ml-sidebar__block ml-sidebar__block--violet" style="flex:3">COMPS</div>
+        <div class="ml-sidebar__block ml-sidebar__block--gold" style="flex:1">FORMS</div>
+        <div class="ml-sidebar__block ml-sidebar__block--cyan" style="flex:2">ANIM</div>
+        <div class="ml-sidebar__block ml-sidebar__block--peach" style="flex:1">DATA</div>
       </div>
     </div>
 
     <div class="ml-app__main">
       <div class="ml-header">
         <div class="ml-header__pill-left">
-          <span style="font-family:var(--ml-font-mono);font-size:var(--ml-text-xs);color:var(--ml-void);letter-spacing:0.1em">v0.1.0</span>
+          <span style="font-family:var(--ml-font-mono);font-size:var(--ml-text-xs);color:var(--ml-void);letter-spacing:0.1em">v0.2.0</span>
         </div>
         <div class="ml-header__body">
           <span class="ml-header__title">Component Library</span>
@@ -67,6 +70,15 @@
       </div>
 
       <div class="ml-app__content">
+        <!-- Breadcrumb -->
+        <div class="ml-breadcrumb ml-mb-lg">
+          <button class="ml-breadcrumb__item">System</button>
+          <span class="ml-breadcrumb__sep">/</span>
+          <button class="ml-breadcrumb__item">Library</button>
+          <span class="ml-breadcrumb__sep">/</span>
+          <button class="ml-breadcrumb__item active">Components</button>
+        </div>
+
         <!-- Colors -->
         <div class="section">
           <div class="section-title">Color Palette</div>
@@ -114,26 +126,83 @@
           </div>
           <div class="demo-row">
             <button class="ml-btn ml-btn--ghost">Ghost</button>
+            <button class="ml-btn ml-btn--danger">Danger</button>
             <button class="ml-btn ml-btn--lg">Large</button>
             <button class="ml-btn ml-btn--sm">Small</button>
+            <button class="ml-btn" disabled>Disabled</button>
           </div>
         </div>
 
-        <!-- Badges -->
+        <!-- Badges & Status -->
         <div class="section">
-          <div class="section-title">Badges & Tags</div>
+          <div class="section-title">Badges, Tags & Status Dots</div>
           <div class="demo-row">
             <span class="ml-badge">Default</span>
             <span class="ml-badge ml-badge--ice">Info</span>
             <span class="ml-badge ml-badge--violet">Science</span>
             <span class="ml-badge ml-badge--mint">Online</span>
             <span class="ml-badge ml-badge--coral">Alert</span>
+            <span class="ml-badge ml-badge--ghost">Ghost</span>
           </div>
           <div class="demo-row">
             <span class="ml-tag">Tag</span>
             <span class="ml-tag">NCC-1031</span>
             <span class="ml-tag">SD 47634.44</span>
           </div>
+          <div class="demo-row" style="gap:var(--ml-space-lg)">
+            <span style="display:flex;align-items:center;gap:6px;font-family:var(--ml-font-mono);font-size:var(--ml-text-sm);color:var(--ml-text)">
+              <span class="ml-dot ml-dot--ok"></span> Online
+            </span>
+            <span style="display:flex;align-items:center;gap:6px;font-family:var(--ml-font-mono);font-size:var(--ml-text-sm);color:var(--ml-text)">
+              <span class="ml-dot ml-dot--warn"></span> Degraded
+            </span>
+            <span style="display:flex;align-items:center;gap:6px;font-family:var(--ml-font-mono);font-size:var(--ml-text-sm);color:var(--ml-text)">
+              <span class="ml-dot ml-dot--err"></span> Offline
+            </span>
+            <span style="display:flex;align-items:center;gap:6px;font-family:var(--ml-font-mono);font-size:var(--ml-text-sm);color:var(--ml-text)">
+              <span class="ml-dot ml-dot--ok ml-dot--pulse"></span> Pulsing
+            </span>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="section">
+          <div class="section-title">Tabs</div>
+          <div class="ml-tabs" id="demo-tabs">
+            <button class="ml-tab active" data-tab="tab-eng">Engineering</button>
+            <button class="ml-tab" data-tab="tab-tac">Tactical</button>
+            <button class="ml-tab" data-tab="tab-sci">Science</button>
+          </div>
+          <div id="tab-eng" class="tab-content active">
+            <div class="ml-panel" data-accent="amber">
+              <div class="ml-stat"><span class="ml-stat__label">Warp Core Output</span><span class="ml-stat__value">97.2%</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Antimatter Flow</span><span class="ml-stat__value ml-stat__value--up">Stable</span></div>
+            </div>
+          </div>
+          <div id="tab-tac" class="tab-content">
+            <div class="ml-panel" data-accent="ice">
+              <div class="ml-stat"><span class="ml-stat__label">Shield Strength</span><span class="ml-stat__value ml-stat__value--up">100%</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Phaser Banks</span><span class="ml-stat__value">Online</span></div>
+            </div>
+          </div>
+          <div id="tab-sci" class="tab-content">
+            <div class="ml-panel" data-accent="violet">
+              <div class="ml-stat"><span class="ml-stat__label">Sensor Range</span><span class="ml-stat__value">15 ly</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Probe Count</span><span class="ml-stat__value">24</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LCARS Divider -->
+        <div class="section">
+          <div class="section-title">LCARS Segmented Divider</div>
+          <div class="ml-divider--lcars ml-mb-md">
+            <div class="ml-divider__seg"></div>
+            <div class="ml-divider__seg"></div>
+            <div class="ml-divider__seg"></div>
+            <div class="ml-divider__seg"></div>
+          </div>
+          <div class="ml-divider ml-mb-md"></div>
         </div>
 
         <!-- Form Controls -->
@@ -142,12 +211,12 @@
           <div class="ml-grid ml-grid--2">
             <div class="ml-panel" data-accent="ice">
               <h4 class="ml-mb-md" style="color:var(--ml-ice)">Inputs</h4>
-              <div class="ml-mb-md">
-                <label class="ml-label ml-mb-sm" style="display:block">Text Input</label>
+              <div class="ml-form-group">
+                <label class="ml-form-label">Text Input</label>
                 <input class="ml-input" type="text" placeholder="Enter command...">
               </div>
-              <div class="ml-mb-md">
-                <label class="ml-label ml-mb-sm" style="display:block">Select</label>
+              <div class="ml-form-group">
+                <label class="ml-form-label">Select</label>
                 <select class="ml-input">
                   <option>Warp Factor 1</option>
                   <option>Warp Factor 5</option>
@@ -155,13 +224,23 @@
                   <option>Warp Factor 9.975</option>
                 </select>
               </div>
-              <div class="ml-mb-md">
-                <label class="ml-label ml-mb-sm" style="display:block">Textarea</label>
+              <div class="ml-form-group">
+                <label class="ml-form-label">Textarea</label>
                 <textarea class="ml-input" placeholder="Captain's log, supplemental..."></textarea>
+                <div class="ml-form-hint">Maximum 500 characters</div>
+              </div>
+              <div class="ml-form-group">
+                <label class="ml-form-label">Error State</label>
+                <input class="ml-input ml-input--error" type="text" value="Invalid command">
+                <div class="ml-form-error">Unrecognized command sequence</div>
               </div>
             </div>
             <div class="ml-panel" data-accent="violet">
-              <h4 class="ml-mb-md" style="color:var(--ml-violet)">Range Sliders</h4>
+              <h4 class="ml-mb-md" style="color:var(--ml-violet)">Search & Range</h4>
+              <div class="ml-search ml-mb-lg">
+                <svg class="ml-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input class="ml-search__input" placeholder="Search systems...">
+              </div>
               <div class="ml-mb-lg">
                 <div class="ml-flex ml-justify-between ml-mb-sm">
                   <label class="ml-label">Warp Factor</label>
@@ -176,13 +255,6 @@
                 </div>
                 <input class="ml-range" type="range" min="0" max="100" value="100" oninput="document.getElementById('shieldVal').textContent=this.value+'%'">
               </div>
-              <div class="ml-mb-lg">
-                <div class="ml-flex ml-justify-between ml-mb-sm">
-                  <label class="ml-label">Sensor Gain</label>
-                  <span class="ml-value" id="sensorVal">7.2</span>
-                </div>
-                <input class="ml-range" type="range" min="0" max="15" step="0.1" value="7.2" oninput="document.getElementById('sensorVal').textContent=parseFloat(this.value).toFixed(1)">
-              </div>
             </div>
           </div>
         </div>
@@ -192,27 +264,27 @@
           <div class="section-title">Panel Variants</div>
           <div class="ml-grid ml-grid--3">
             <div class="ml-panel" data-accent="amber">
-              <h4 class="ml-mb-sm" style="color:var(--ml-amber)">Engineering</h4>
+              <div class="ml-panel__title">Engineering</div>
               <p style="font-size:var(--ml-text-sm)">Amber accent panel for engineering and primary systems data.</p>
             </div>
             <div class="ml-panel" data-accent="ice">
-              <h4 class="ml-mb-sm" style="color:var(--ml-ice)">Tactical</h4>
+              <div class="ml-panel__title" style="color:var(--ml-ice);border-bottom-color:rgba(118,199,240,0.15)">Tactical</div>
               <p style="font-size:var(--ml-text-sm)">Ice accent for tactical information and sensor data readouts.</p>
             </div>
             <div class="ml-panel" data-accent="violet">
-              <h4 class="ml-mb-sm" style="color:var(--ml-violet)">Science</h4>
+              <div class="ml-panel__title" style="color:var(--ml-violet);border-bottom-color:rgba(155,114,207,0.15)">Science</div>
               <p style="font-size:var(--ml-text-sm)">Violet accent for science station, analysis, and crew data.</p>
             </div>
             <div class="ml-panel" data-accent="cyan">
-              <h4 class="ml-mb-sm" style="color:var(--ml-cyan)">Operations</h4>
+              <div class="ml-panel__title" style="color:var(--ml-cyan);border-bottom-color:rgba(86,227,227,0.15)">Operations</div>
               <p style="font-size:var(--ml-text-sm)">Cyan accent for operations, comms, and coordination panels.</p>
             </div>
             <div class="ml-panel" data-accent="mint">
-              <h4 class="ml-mb-sm" style="color:var(--ml-mint)">Medical</h4>
+              <div class="ml-panel__title" style="color:var(--ml-mint);border-bottom-color:rgba(128,255,219,0.15)">Medical</div>
               <p style="font-size:var(--ml-text-sm)">Mint accent for medical readouts and environmental systems.</p>
             </div>
             <div class="ml-panel" data-accent="coral">
-              <h4 class="ml-mb-sm" style="color:var(--ml-coral)">Alert</h4>
+              <div class="ml-panel__title" style="color:var(--ml-coral);border-bottom-color:rgba(255,107,107,0.15)">Alert</div>
               <p style="font-size:var(--ml-text-sm)">Coral accent for warnings, alerts, and critical status displays.</p>
             </div>
           </div>
@@ -227,12 +299,132 @@
           <div class="ml-alert ml-alert--danger ml-mb-md">Red Alert — unauthorized vessel detected in sector 47.</div>
         </div>
 
+        <!-- Spinners & Skeleton -->
+        <div class="section">
+          <div class="section-title">Loading States</div>
+          <div class="ml-grid ml-grid--2">
+            <div class="ml-panel" data-accent="gold">
+              <h4 class="ml-mb-md" style="color:var(--ml-gold)">Spinners</h4>
+              <div class="demo-row" style="gap:var(--ml-space-xl)">
+                <div style="text-align:center">
+                  <div class="ml-spinner ml-spinner--sm ml-mb-sm"></div>
+                  <div class="ml-label">SM</div>
+                </div>
+                <div style="text-align:center">
+                  <div class="ml-spinner ml-mb-sm"></div>
+                  <div class="ml-label">Default</div>
+                </div>
+                <div style="text-align:center">
+                  <div class="ml-spinner ml-spinner--lg ml-mb-sm"></div>
+                  <div class="ml-label">LG</div>
+                </div>
+                <div style="text-align:center">
+                  <div class="ml-spinner ml-spinner--lg ml-spinner--ice ml-mb-sm"></div>
+                  <div class="ml-label">Ice</div>
+                </div>
+              </div>
+            </div>
+            <div class="ml-panel" data-accent="cyan">
+              <h4 class="ml-mb-md" style="color:var(--ml-cyan)">Skeleton Loaders</h4>
+              <div style="display:flex;gap:var(--ml-space-md);align-items:flex-start">
+                <div class="ml-skeleton ml-skeleton--avatar"></div>
+                <div style="flex:1">
+                  <div class="ml-skeleton ml-skeleton--title"></div>
+                  <div class="ml-skeleton ml-skeleton--text"></div>
+                  <div class="ml-skeleton ml-skeleton--text" style="width:80%"></div>
+                </div>
+              </div>
+              <div class="ml-skeleton ml-skeleton--card ml-mt-md" style="min-height:60px"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Demo -->
+        <div class="section">
+          <div class="section-title">Modal</div>
+          <button class="ml-btn" onclick="document.getElementById('demo-modal-backdrop').style.display='block';document.getElementById('demo-modal').style.display='block'">Open Modal</button>
+          <div id="demo-modal-backdrop" class="ml-modal-backdrop" style="display:none" onclick="this.style.display='none';document.getElementById('demo-modal').style.display='none'"></div>
+          <div id="demo-modal" class="ml-modal" style="display:none">
+            <div class="ml-modal__header">
+              <div class="ml-modal__title">Confirm Action</div>
+            </div>
+            <div class="ml-modal__body">
+              Initiating warp drive sequence. All departments report ready status. This action will engage the main deflector and route power from auxiliary systems.
+            </div>
+            <div class="ml-modal__footer">
+              <button class="ml-btn ml-btn--ghost ml-btn--sm" onclick="document.getElementById('demo-modal').style.display='none';document.getElementById('demo-modal-backdrop').style.display='none'">Cancel</button>
+              <button class="ml-btn ml-btn--sm" onclick="document.getElementById('demo-modal').style.display='none';document.getElementById('demo-modal-backdrop').style.display='none'">Engage</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion -->
+        <div class="section">
+          <div class="section-title">Accordion</div>
+          <div class="ml-accordion" id="demo-accordion">
+            <div class="ml-accordion__item open">
+              <div class="ml-accordion__header" onclick="this.parentElement.classList.toggle('open')">
+                <span>Primary Systems</span>
+                <span style="color:var(--ml-text-dim)">&#9662;</span>
+              </div>
+              <div class="ml-accordion__body">
+                <div class="ml-stat"><span class="ml-stat__label">Warp Core</span><span class="ml-stat__value ml-stat__value--up">Online</span></div>
+                <div class="ml-stat"><span class="ml-stat__label">Impulse Engines</span><span class="ml-stat__value ml-stat__value--up">Online</span></div>
+              </div>
+            </div>
+            <div class="ml-accordion__item">
+              <div class="ml-accordion__header" onclick="this.parentElement.classList.toggle('open')">
+                <span>Secondary Systems</span>
+                <span style="color:var(--ml-text-dim)">&#9662;</span>
+              </div>
+              <div class="ml-accordion__body">
+                <div class="ml-stat"><span class="ml-stat__label">Holodeck 1</span><span class="ml-stat__value">Standby</span></div>
+                <div class="ml-stat"><span class="ml-stat__label">Holodeck 2</span><span class="ml-stat__value ml-stat__value--down">Offline</span></div>
+              </div>
+            </div>
+            <div class="ml-accordion__item">
+              <div class="ml-accordion__header" onclick="this.parentElement.classList.toggle('open')">
+                <span>Environmental Controls</span>
+                <span style="color:var(--ml-text-dim)">&#9662;</span>
+              </div>
+              <div class="ml-accordion__body">
+                <div class="ml-stat"><span class="ml-stat__label">Temperature</span><span class="ml-stat__value">22.4&deg;C</span></div>
+                <div class="ml-stat"><span class="ml-stat__label">Gravity</span><span class="ml-stat__value">1.0g</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Log Viewer -->
+        <div class="section">
+          <div class="section-title">Log Viewer</div>
+          <div class="ml-log" style="max-height:200px">SD 47634.44  [HELM] Course set to Starbase 74, bearing 234 mark 7
+SD 47634.44  [ENG]  Warp core online — matter/antimatter ratio nominal
+SD 47634.45  [TAC]  Shields at 100% — phaser banks charged
+SD 47634.45  [SCI]  Long-range sensors detecting class-M planet at 4.2 ly
+SD 47634.46  [OPS]  Power distribution optimized for current mission profile
+SD 47634.46  [MED]  Crew health status: all departments green
+SD 47634.47  [COM]  Subspace relay lock confirmed — Starfleet Command channel open</div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="section">
+          <div class="section-title">Empty State</div>
+          <div class="ml-panel" data-accent="ice">
+            <div class="ml-empty">
+              <div style="font-size:var(--ml-text-2xl);opacity:0.3">&#9677;</div>
+              <div>No sensor data available</div>
+              <button class="ml-btn ml-btn--ice ml-btn--sm">Run Diagnostic</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Progress Bars -->
         <div class="section">
           <div class="section-title">Progress Bars</div>
           <div class="ml-panel" data-accent="gold">
             <div class="ml-flex ml-justify-between ml-mb-sm">
-              <span class="ml-label">Default (Amber→Gold)</span>
+              <span class="ml-label">Default (Amber/Gold)</span>
               <span class="ml-value">72%</span>
             </div>
             <div class="ml-progress ml-mb-lg"><div class="ml-progress__fill" style="width:72%"></div></div>
@@ -246,6 +438,11 @@
               <span class="ml-value">91%</span>
             </div>
             <div class="ml-progress ml-progress--violet ml-mb-lg"><div class="ml-progress__fill" style="width:91%"></div></div>
+            <div class="ml-flex ml-justify-between ml-mb-sm">
+              <span class="ml-label">Mint Variant</span>
+              <span class="ml-value">45%</span>
+            </div>
+            <div class="ml-progress ml-progress--mint"><div class="ml-progress__fill" style="width:45%"></div></div>
           </div>
         </div>
 
@@ -323,8 +520,57 @@
             </table>
           </div>
         </div>
+
+        <!-- Toast Demo -->
+        <div class="section">
+          <div class="section-title">Toast Notifications</div>
+          <div class="demo-row">
+            <button class="ml-btn ml-btn--sm" onclick="showDemoToast('info')">Info Toast</button>
+            <button class="ml-btn ml-btn--mint ml-btn--sm" onclick="showDemoToast('success')">Success Toast</button>
+            <button class="ml-btn ml-btn--gold ml-btn--sm" onclick="showDemoToast('warning')">Warning Toast</button>
+            <button class="ml-btn ml-btn--coral ml-btn--sm" onclick="showDemoToast('error')">Error Toast</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- Toast container -->
+  <div class="ml-toast-container" id="toast-container"></div>
+
+  <script>
+    // Tab switching
+    document.getElementById('demo-tabs').addEventListener('click', e => {
+      const tab = e.target.closest('.ml-tab');
+      if (!tab) return;
+      document.querySelectorAll('#demo-tabs .ml-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      const target = document.getElementById(tab.dataset.tab);
+      if (target) target.classList.add('active');
+    });
+
+    // Toast demo
+    const toastMessages = {
+      info: 'Sensor sweep complete — no anomalies detected.',
+      success: 'Course correction applied successfully.',
+      warning: 'Deflector array operating at 78% capacity.',
+      error: 'Communications relay has gone offline.'
+    };
+
+    function showDemoToast(type) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `ml-toast ml-toast--${type}`;
+      toast.textContent = toastMessages[type];
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        toast.style.transition = 'all 0.2s ease';
+        setTimeout(() => toast.remove(), 200);
+      }, 3000);
+    }
+  </script>
 </body>
 </html>

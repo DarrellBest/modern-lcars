@@ -42,21 +42,23 @@
   /* ── Text ─────────────────────────────────────────────────── */
   --ml-text:          #E8DFD0;
   --ml-text-muted:    #7A8BA4;
+  --ml-text-dim:      #4A5568;
   --ml-text-bright:   #FFFFFF;
 
   /* ── Glass ────────────────────────────────────────────────── */
-  --ml-glass-bg:      rgba(10, 22, 40, 0.65);
+  --ml-glass-bg:      rgba(10, 22, 40, 0.72);
   --ml-glass-border:  rgba(244, 162, 97, 0.12);
-  --ml-glass-blur:    20px;
+  --ml-glass-blur:    16px;
   --ml-glass-shine:   linear-gradient(
                         135deg,
-                        rgba(255, 255, 255, 0.04) 0%,
-                        rgba(255, 255, 255, 0) 60%
+                        rgba(255, 255, 255, 0.05) 0%,
+                        rgba(255, 255, 255, 0.01) 50%,
+                        rgba(255, 255, 255, 0) 100%
                       );
 
   /* ── Borders & Radii ──────────────────────────────────────── */
   --ml-radius-sm:     6px;
-  --ml-radius-md:     12px;
+  --ml-radius-md:     10px;
   --ml-radius-lg:     20px;
   --ml-radius-pill:   999px;
   --ml-radius-elbow:  0 24px 24px 0;
@@ -74,7 +76,7 @@
 
   /* ── Typography ───────────────────────────────────────────── */
   --ml-font-display:  'Chakra Petch', 'Orbitron', sans-serif;
-  --ml-font-body:     'Inter', 'Share Tech Mono', sans-serif;
+  --ml-font-body:     'Inter', system-ui, sans-serif;
   --ml-font-mono:     'JetBrains Mono', 'Share Tech Mono', monospace;
 
   --ml-text-xs:       0.7rem;
@@ -92,10 +94,27 @@
   --ml-duration-med:  300ms;
   --ml-duration-slow: 600ms;
 
-  /* ── Elevation (glow) ─────────────────────────────────────── */
+  /* ── Elevation (glow + shadow) ────────────────────────────── */
   --ml-glow-sm:       0 0 8px rgba(244, 162, 97, 0.15);
   --ml-glow-md:       0 0 20px rgba(244, 162, 97, 0.2);
   --ml-glow-lg:       0 0 40px rgba(244, 162, 97, 0.25);
   --ml-glow-ice:      0 0 20px rgba(118, 199, 240, 0.2);
   --ml-glow-violet:   0 0 20px rgba(155, 114, 207, 0.2);
+
+  --ml-shadow-sm:     0 2px 8px rgba(0, 0, 0, 0.3);
+  --ml-shadow-md:     0 4px 20px rgba(0, 0, 0, 0.4);
+  --ml-shadow-lg:     0 8px 40px rgba(0, 0, 0, 0.5);
+
+  /* ── Z-Index Scale ────────────────────────────────────────── */
+  --ml-z-base:        0;
+  --ml-z-above:       10;
+  --ml-z-sticky:      100;
+  --ml-z-overlay:     1000;
+  --ml-z-modal:       8000;
+  --ml-z-toast:       9000;
+  --ml-z-scanline:    9999;
+
+  /* ── State ────────────────────────────────────────────────── */
+  --ml-disabled-opacity: 0.4;
+  --ml-focus-ring:    0 0 0 3px rgba(244, 162, 97, 0.2);
 }

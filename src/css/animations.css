@@ -8,8 +8,18 @@
   to   { opacity: 1; }
 }
 
+@keyframes ml-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
 @keyframes ml-slide-up {
   from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ml-slide-down {
+  from { opacity: 0; transform: translateY(-12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -18,14 +28,34 @@
   to   { opacity: 1; transform: translateX(0); }
 }
 
+@keyframes ml-slide-left {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 @keyframes ml-scale-in {
   from { opacity: 0; transform: scale(0.95); }
   to   { opacity: 1; transform: scale(1); }
 }
 
+@keyframes ml-scale-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.95); }
+}
+
 @keyframes ml-pulse-glow {
   0%, 100% { box-shadow: 0 0 8px rgba(244, 162, 97, 0.15); }
   50%      { box-shadow: 0 0 24px rgba(244, 162, 97, 0.3); }
+}
+
+@keyframes ml-pulse-glow-ice {
+  0%, 100% { box-shadow: 0 0 8px rgba(118, 199, 240, 0.15); }
+  50%      { box-shadow: 0 0 24px rgba(118, 199, 240, 0.3); }
+}
+
+@keyframes ml-pulse-glow-violet {
+  0%, 100% { box-shadow: 0 0 8px rgba(155, 114, 207, 0.15); }
+  50%      { box-shadow: 0 0 24px rgba(155, 114, 207, 0.3); }
 }
 
 @keyframes ml-scan {
@@ -48,15 +78,59 @@
   100% { width: 100%; }
 }
 
-/* ── Utility Classes ────────────────────────────────────────── */
-.ml-animate-fade    { animation: ml-fade-in var(--ml-duration-med) var(--ml-ease-out) both; }
-.ml-animate-up      { animation: ml-slide-up var(--ml-duration-med) var(--ml-ease-out) both; }
-.ml-animate-right   { animation: ml-slide-right var(--ml-duration-med) var(--ml-ease-out) both; }
-.ml-animate-scale   { animation: ml-scale-in var(--ml-duration-med) var(--ml-ease-out) both; }
-.ml-animate-pulse   { animation: ml-pulse-glow 2s ease-in-out infinite; }
-.ml-animate-blink   { animation: ml-blink 1.5s ease-in-out infinite; }
+@keyframes ml-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
 
-/* Staggered entrance */
+@keyframes ml-rotate {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ml-bounce-in {
+  0%   { opacity: 0; transform: scale(0.3); }
+  50%  { opacity: 1; transform: scale(1.05); }
+  70%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+@keyframes ml-toast-in {
+  from { opacity: 0; transform: translateX(100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes ml-toast-out {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(100%); }
+}
+
+@keyframes ml-progress {
+  0%   { width: 0; }
+  100% { width: var(--ml-progress, 100%); }
+}
+
+@keyframes ml-border-trace {
+  0%   { clip-path: inset(0 100% 100% 0); }
+  25%  { clip-path: inset(0 0 100% 0); }
+  50%  { clip-path: inset(0 0 0 0); }
+  75%  { clip-path: inset(0 0 0 0); }
+  100% { clip-path: inset(0 0 0 0); }
+}
+
+/* ── Utility Classes ────────────────────────────────────────── */
+.ml-animate-fade      { animation: ml-fade-in var(--ml-duration-med) var(--ml-ease-out) both; }
+.ml-animate-up        { animation: ml-slide-up var(--ml-duration-med) var(--ml-ease-out) both; }
+.ml-animate-down      { animation: ml-slide-down var(--ml-duration-med) var(--ml-ease-out) both; }
+.ml-animate-right     { animation: ml-slide-right var(--ml-duration-med) var(--ml-ease-out) both; }
+.ml-animate-left      { animation: ml-slide-left var(--ml-duration-med) var(--ml-ease-out) both; }
+.ml-animate-scale     { animation: ml-scale-in var(--ml-duration-med) var(--ml-ease-out) both; }
+.ml-animate-bounce    { animation: ml-bounce-in var(--ml-duration-slow) var(--ml-ease-spring) both; }
+.ml-animate-pulse     { animation: ml-pulse-glow 2s ease-in-out infinite; }
+.ml-animate-pulse-ice { animation: ml-pulse-glow-ice 2s ease-in-out infinite; }
+.ml-animate-blink     { animation: ml-blink 1.5s ease-in-out infinite; }
+.ml-animate-spin      { animation: ml-rotate 1s linear infinite; }
+
+/* Staggered entrance — supports up to 12 children */
 .ml-stagger > *:nth-child(1)  { animation-delay: 0ms; }
 .ml-stagger > *:nth-child(2)  { animation-delay: 60ms; }
 .ml-stagger > *:nth-child(3)  { animation-delay: 120ms; }
@@ -65,6 +139,33 @@
 .ml-stagger > *:nth-child(6)  { animation-delay: 300ms; }
 .ml-stagger > *:nth-child(7)  { animation-delay: 360ms; }
 .ml-stagger > *:nth-child(8)  { animation-delay: 420ms; }
+.ml-stagger > *:nth-child(9)  { animation-delay: 480ms; }
+.ml-stagger > *:nth-child(10) { animation-delay: 540ms; }
+.ml-stagger > *:nth-child(11) { animation-delay: 600ms; }
+.ml-stagger > *:nth-child(12) { animation-delay: 660ms; }
+
+/* Fast stagger (tighter delays) */
+.ml-stagger--fast > *:nth-child(1)  { animation-delay: 0ms; }
+.ml-stagger--fast > *:nth-child(2)  { animation-delay: 30ms; }
+.ml-stagger--fast > *:nth-child(3)  { animation-delay: 60ms; }
+.ml-stagger--fast > *:nth-child(4)  { animation-delay: 90ms; }
+.ml-stagger--fast > *:nth-child(5)  { animation-delay: 120ms; }
+.ml-stagger--fast > *:nth-child(6)  { animation-delay: 150ms; }
+.ml-stagger--fast > *:nth-child(7)  { animation-delay: 180ms; }
+.ml-stagger--fast > *:nth-child(8)  { animation-delay: 210ms; }
+
+/* ── Transition Utilities ──────────────────────────────────── */
+.ml-transition {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+  transition-duration: var(--ml-duration-fast);
+  transition-timing-function: var(--ml-ease-out);
+}
+
+.ml-transition-slow {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+  transition-duration: var(--ml-duration-med);
+  transition-timing-function: var(--ml-ease-out);
+}
 
 /* ── Ambient Scanner (decorative overlay) ───────────────────── */
 .ml-scanner {
@@ -90,6 +191,19 @@
   );
   opacity: 0.3;
   animation: ml-scan 4s linear infinite;
+}
+
+/* Scanner color variants */
+.ml-scanner--amber::after {
+  background: linear-gradient(
+    90deg, transparent, var(--ml-amber) 20%, var(--ml-amber) 80%, transparent
+  );
+}
+
+.ml-scanner--violet::after {
+  background: linear-gradient(
+    90deg, transparent, var(--ml-violet) 20%, var(--ml-violet) 80%, transparent
+  );
 }
 
 /* ── Holographic shimmer ────────────────────────────────────── */
@@ -119,4 +233,36 @@
 
 @keyframes ml-holo-spin {
   to { transform: rotate(360deg); }
+}
+
+/* ── Reduced Motion ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .ml-animate-fade,
+  .ml-animate-up,
+  .ml-animate-down,
+  .ml-animate-right,
+  .ml-animate-left,
+  .ml-animate-scale,
+  .ml-animate-bounce,
+  .ml-animate-pulse,
+  .ml-animate-pulse-ice,
+  .ml-animate-blink,
+  .ml-animate-spin {
+    animation: none !important;
+  }
+
+  .ml-scanner::after,
+  .ml-holo::after {
+    animation: none !important;
+  }
+
+  .ml-transition,
+  .ml-transition-slow {
+    transition: none !important;
+  }
+
+  .ml-stagger > *,
+  .ml-stagger--fast > * {
+    animation-delay: 0ms !important;
+  }
 }
