@@ -1,0 +1,122 @@
+/* ============================================================
+   MODERN LCARS — Animations
+   ============================================================ */
+
+/* ── Keyframes ──────────────────────────────────────────────── */
+@keyframes ml-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes ml-slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ml-slide-right {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes ml-scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ml-pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(244, 162, 97, 0.15); }
+  50%      { box-shadow: 0 0 24px rgba(244, 162, 97, 0.3); }
+}
+
+@keyframes ml-scan {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes ml-data-stream {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 0% 100%; }
+}
+
+@keyframes ml-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+@keyframes ml-sweep {
+  0%   { width: 0; }
+  100% { width: 100%; }
+}
+
+/* ── Utility Classes ────────────────────────────────────────── */
+.ml-animate-fade    { animation: ml-fade-in var(--ml-duration-med) var(--ml-ease-out) both; }
+.ml-animate-up      { animation: ml-slide-up var(--ml-duration-med) var(--ml-ease-out) both; }
+.ml-animate-right   { animation: ml-slide-right var(--ml-duration-med) var(--ml-ease-out) both; }
+.ml-animate-scale   { animation: ml-scale-in var(--ml-duration-med) var(--ml-ease-out) both; }
+.ml-animate-pulse   { animation: ml-pulse-glow 2s ease-in-out infinite; }
+.ml-animate-blink   { animation: ml-blink 1.5s ease-in-out infinite; }
+
+/* Staggered entrance */
+.ml-stagger > *:nth-child(1)  { animation-delay: 0ms; }
+.ml-stagger > *:nth-child(2)  { animation-delay: 60ms; }
+.ml-stagger > *:nth-child(3)  { animation-delay: 120ms; }
+.ml-stagger > *:nth-child(4)  { animation-delay: 180ms; }
+.ml-stagger > *:nth-child(5)  { animation-delay: 240ms; }
+.ml-stagger > *:nth-child(6)  { animation-delay: 300ms; }
+.ml-stagger > *:nth-child(7)  { animation-delay: 360ms; }
+.ml-stagger > *:nth-child(8)  { animation-delay: 420ms; }
+
+/* ── Ambient Scanner (decorative overlay) ───────────────────── */
+.ml-scanner {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.ml-scanner::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--ml-cyan) 20%,
+    var(--ml-cyan) 80%,
+    transparent
+  );
+  opacity: 0.3;
+  animation: ml-scan 4s linear infinite;
+}
+
+/* ── Holographic shimmer ────────────────────────────────────── */
+.ml-holo {
+  position: relative;
+  overflow: hidden;
+}
+
+.ml-holo::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    rgba(118, 199, 240, 0.03) 10%,
+    transparent 20%,
+    rgba(155, 114, 207, 0.03) 30%,
+    transparent 40%
+  );
+  animation: ml-holo-spin 8s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes ml-holo-spin {
+  to { transform: rotate(360deg); }
+}

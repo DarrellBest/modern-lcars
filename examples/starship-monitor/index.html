@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern LCARS — Starship Systems Monitor</title>
+  <link rel="stylesheet" href="../../src/css/modern-lcars.css">
+  <style>
+    .ship-diagram {
+      position: relative;
+      height: 300px;
+      background:
+        radial-gradient(ellipse at 50% 50%, rgba(244, 162, 97, 0.03) 0%, transparent 60%),
+        var(--ml-deep);
+      border-radius: var(--ml-radius-md);
+      border: var(--ml-border-thin);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ship-outline {
+      width: 500px;
+      height: 200px;
+      position: relative;
+    }
+    /* Simplified top-down Discovery silhouette using CSS */
+    .ship-hull {
+      position: absolute;
+      background: var(--ml-overlay);
+      border: 1px solid rgba(244, 162, 97, 0.2);
+    }
+    .ship-hull--saucer {
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      top: 10px; left: 160px;
+      background: radial-gradient(circle at 50% 40%, var(--ml-surface) 0%, var(--ml-overlay) 100%);
+      border: 1px solid rgba(118, 199, 240, 0.2);
+    }
+    .ship-hull--neck {
+      width: 30px; height: 40px;
+      top: 140px; left: 235px;
+      border-radius: 4px;
+    }
+    .ship-hull--engineering {
+      width: 60px; height: 100px;
+      top: 60px; left: 220px;
+      border-radius: 8px;
+      top: 170px;
+    }
+    .ship-hull--nacelle-l {
+      width: 140px; height: 20px;
+      top: 30px; left: 20px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, var(--ml-ice), var(--ml-cyan));
+      opacity: 0.5;
+      box-shadow: 0 0 15px rgba(86, 227, 227, 0.3);
+    }
+    .ship-hull--nacelle-r {
+      width: 140px; height: 20px;
+      top: 30px; left: 340px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, var(--ml-cyan), var(--ml-ice));
+      opacity: 0.5;
+      box-shadow: 0 0 15px rgba(86, 227, 227, 0.3);
+    }
+    .ship-hull--pylon-l {
+      width: 8px; height: 80px;
+      top: 45px; left: 155px;
+      transform: rotate(-25deg);
+      border-radius: 4px;
+    }
+    .ship-hull--pylon-r {
+      width: 8px; height: 80px;
+      top: 45px; left: 340px;
+      transform: rotate(25deg);
+      border-radius: 4px;
+    }
+    /* Hotspots */
+    .hotspot {
+      position: absolute;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .hotspot__ring {
+      position: absolute; inset: -4px;
+      border-radius: 50%;
+      border: 2px solid;
+      animation: ml-pulse-glow 2s ease-in-out infinite;
+    }
+    .hotspot__dot {
+      position: absolute; inset: 3px;
+      border-radius: 50%;
+    }
+    .hotspot--green .hotspot__ring { border-color: var(--ml-mint); }
+    .hotspot--green .hotspot__dot  { background: var(--ml-mint); box-shadow: 0 0 8px var(--ml-mint); }
+    .hotspot--amber .hotspot__ring { border-color: var(--ml-amber); }
+    .hotspot--amber .hotspot__dot  { background: var(--ml-amber); box-shadow: 0 0 8px var(--ml-amber); }
+    .hotspot--red .hotspot__ring   { border-color: var(--ml-coral); }
+    .hotspot--red .hotspot__dot    { background: var(--ml-coral); box-shadow: 0 0 8px var(--ml-coral); animation: ml-blink 1s ease-in-out infinite; }
+
+    .system-detail {
+      display: none;
+      position: absolute;
+      bottom: var(--ml-space-md);
+      left: var(--ml-space-md);
+      right: var(--ml-space-md);
+      background: var(--ml-glass-bg);
+      backdrop-filter: blur(20px);
+      border: var(--ml-border-thin);
+      border-radius: var(--ml-radius-md);
+      padding: var(--ml-space-md);
+      z-index: 10;
+    }
+    .system-detail.active { display: block; }
+
+    .sensor-sweep {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(86, 227, 227, 0.1);
+      animation: ml-pulse-glow 3s ease-in-out infinite;
+    }
+
+    .live-log {
+      height: 200px;
+      overflow-y: auto;
+      font-family: var(--ml-font-mono);
+      font-size: var(--ml-text-xs);
+      line-height: 1.8;
+      color: var(--ml-text-muted);
+    }
+    .live-log .entry {
+      padding: 2px var(--ml-space-sm);
+      border-left: 2px solid transparent;
+    }
+    .live-log .entry:hover { background: rgba(244, 162, 97, 0.03); }
+    .live-log .entry--info    { border-left-color: var(--ml-ice); }
+    .live-log .entry--warning { border-left-color: var(--ml-gold); color: var(--ml-gold); }
+    .live-log .entry--error   { border-left-color: var(--ml-coral); color: var(--ml-coral); }
+    .live-log .entry--ok      { border-left-color: var(--ml-mint); }
+    .live-log .ts { color: var(--ml-text-muted); opacity: 0.5; margin-right: var(--ml-space-sm); }
+  </style>
+</head>
+<body>
+  <div class="ml-app">
+    <div class="ml-app__sidebar">
+      <div class="ml-sidebar ml-stagger">
+        <div class="ml-sidebar__block ml-sidebar__block--amber ml-animate-right" style="flex:2">PWR</div>
+        <div class="ml-sidebar__block ml-sidebar__block--ice ml-animate-right" style="flex:3">TAC</div>
+        <div class="ml-sidebar__block ml-sidebar__block--violet ml-animate-right" style="flex:2">SCI</div>
+        <div class="ml-sidebar__block ml-sidebar__block--cyan ml-animate-right" style="flex:1">NAV</div>
+        <div class="ml-sidebar__block ml-sidebar__block--gold ml-animate-right" style="flex:2">ENG</div>
+        <div class="ml-sidebar__block ml-sidebar__block--peach ml-animate-right" style="flex:1">MED</div>
+      </div>
+    </div>
+
+    <div class="ml-app__main">
+      <div class="ml-header ml-animate-fade">
+        <div class="ml-header__pill-left">
+          <span style="font-family:var(--ml-font-mono);font-size:var(--ml-text-xs);color:var(--ml-void);letter-spacing:0.1em">ALPHA</span>
+        </div>
+        <div class="ml-header__body">
+          <span class="ml-header__title">Starship Systems Monitor</span>
+          <span class="ml-header__subtitle">Real-Time Diagnostic</span>
+          <div style="margin-left:auto;display:flex;gap:var(--ml-space-sm);align-items:center">
+            <span class="ml-badge ml-badge--mint ml-animate-blink">LIVE</span>
+            <span class="ml-tag">Condition: Green</span>
+          </div>
+        </div>
+        <div class="ml-header__pill-right"></div>
+      </div>
+
+      <div class="ml-app__content">
+        <!-- Ship Diagram -->
+        <div class="ml-panel ml-animate-up ml-mb-md" data-accent="ice" style="padding:0;overflow:hidden">
+          <div class="ship-diagram">
+            <div class="ship-outline">
+              <div class="ship-hull ship-hull--saucer">
+                <div class="sensor-sweep"></div>
+              </div>
+              <div class="ship-hull ship-hull--neck"></div>
+              <div class="ship-hull ship-hull--engineering"></div>
+              <div class="ship-hull ship-hull--nacelle-l"></div>
+              <div class="ship-hull ship-hull--nacelle-r"></div>
+              <div class="ship-hull ship-hull--pylon-l"></div>
+              <div class="ship-hull ship-hull--pylon-r"></div>
+
+              <!-- Status hotspots -->
+              <div class="hotspot hotspot--green" style="top:80px;left:240px" data-system="bridge" title="Bridge">
+                <div class="hotspot__ring"></div><div class="hotspot__dot"></div>
+              </div>
+              <div class="hotspot hotspot--green" style="top:200px;left:245px" data-system="warp-core" title="Warp Core">
+                <div class="hotspot__ring"></div><div class="hotspot__dot"></div>
+              </div>
+              <div class="hotspot hotspot--green" style="top:35px;left:70px" data-system="nacelle-port" title="Port Nacelle">
+                <div class="hotspot__ring"></div><div class="hotspot__dot"></div>
+              </div>
+              <div class="hotspot hotspot--green" style="top:35px;left:420px" data-system="nacelle-stbd" title="Starboard Nacelle">
+                <div class="hotspot__ring"></div><div class="hotspot__dot"></div>
+              </div>
+              <div class="hotspot hotspot--amber" style="top:130px;left:320px" data-system="deflector" title="Deflector Array">
+                <div class="hotspot__ring"></div><div class="hotspot__dot"></div>
+              </div>
+            </div>
+
+            <div class="system-detail" id="systemDetail">
+              <div class="ml-flex ml-justify-between ml-items-center ml-mb-sm">
+                <h4 id="detailTitle" style="color:var(--ml-ice);margin:0">System</h4>
+                <span class="ml-badge" id="detailStatus">Online</span>
+              </div>
+              <div id="detailContent"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Panels -->
+        <div class="ml-grid ml-grid--3 ml-mb-md">
+          <!-- Power Systems -->
+          <div class="ml-panel ml-animate-up" data-accent="amber">
+            <h4 class="ml-mb-md" style="color:var(--ml-amber)">Power Grid</h4>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Main Power</span>
+              <span class="ml-stat__value" id="mainPower">98.4%</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Aux Power</span>
+              <span class="ml-stat__value">Standby</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">EPS Grid</span>
+              <span class="ml-stat__value ml-stat__value--up" id="epsGrid">Nominal</span>
+            </div>
+            <div class="ml-divider"></div>
+            <div class="ml-flex ml-justify-between ml-mb-sm">
+              <span class="ml-label">Core Temp</span>
+              <span class="ml-value" id="coreTemp">3,247°K</span>
+            </div>
+            <div class="ml-progress"><div class="ml-progress__fill" id="coreTempBar" style="width:72%"></div></div>
+          </div>
+
+          <!-- Navigation -->
+          <div class="ml-panel ml-animate-up" data-accent="cyan">
+            <h4 class="ml-mb-md" style="color:var(--ml-cyan)">Navigation</h4>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Current Speed</span>
+              <span class="ml-stat__value" id="speed">Warp 6.2</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Heading</span>
+              <span class="ml-stat__value" id="heading">127 mark 4</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Destination</span>
+              <span class="ml-stat__value">Starbase 12</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">ETA</span>
+              <span class="ml-stat__value" id="eta">3h 42m</span>
+            </div>
+          </div>
+
+          <!-- Environment -->
+          <div class="ml-panel ml-animate-up" data-accent="mint">
+            <h4 class="ml-mb-md" style="color:var(--ml-mint)">Environment</h4>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Atmosphere</span>
+              <span class="ml-stat__value ml-stat__value--up">Optimal</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Temp (Avg)</span>
+              <span class="ml-stat__value">22.1°C</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Gravity</span>
+              <span class="ml-stat__value">1.00g</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Radiation</span>
+              <span class="ml-stat__value ml-stat__value--up">0.02 mSv</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Log -->
+        <div class="ml-panel ml-animate-up" data-accent="gold">
+          <div class="ml-flex ml-justify-between ml-items-center ml-mb-md">
+            <h4 style="color:var(--ml-gold);margin:0">System Log</h4>
+            <div class="ml-flex ml-gap-sm">
+              <button class="ml-btn ml-btn--sm ml-btn--ghost" onclick="clearLog()">Clear</button>
+              <span class="ml-tag" id="logCount">0 entries</span>
+            </div>
+          </div>
+          <div class="live-log" id="liveLog"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // System detail popups
+    const systems = {
+      'bridge': {
+        title: 'Main Bridge',
+        status: 'Online',
+        statusClass: 'ml-badge--mint',
+        content: `
+          <div class="ml-stat"><span class="ml-stat__label">Crew</span><span class="ml-stat__value">12</span></div>
+          <div class="ml-stat"><span class="ml-stat__label">Console Status</span><span class="ml-stat__value ml-stat__value--up">All Active</span></div>
+          <div class="ml-stat"><span class="ml-stat__label">Viewscreen</span><span class="ml-stat__value">Forward</span></div>
+        `
+      },
+      'warp-core': {
+        title: 'Warp Core',
+        status: 'Online',
+        statusClass: 'ml-badge--mint',
+        content: `
+          <div class="ml-stat"><span class="ml-stat__label">Output</span><span class="ml-stat__value">97.2%</span></div>
+          <div class="ml-stat"><span class="ml-stat__label">M/AM Ratio</span><span class="ml-stat__value ml-stat__value--up">1:1 Balanced</span></div>
+          <div class="ml-stat"><span class="ml-stat__label">Containment</span><span class="ml-stat__value ml-stat__value--up">Stable</span></div>
+        `
+      },
+      'nacelle-port': {
+        title: 'Port Nacelle',
+        status: 'Online',
+        statusClass: 'ml-badge--mint',
+        content: `
+          <div class="ml-stat"><span class="ml-stat__label">Plasma Flow</span><span class="ml-stat__value ml-stat__value--up">Nominal</span></div>
+          <div class="ml-stat"><span class="ml-stat__label">Field Coils</span><span class="ml-stat__value">98.7%</span></div>
+          <div class="ml-stat"><span class="ml-stat__label">Bussard Collector</span><span class="ml-stat__value">Active</span></div>
+        `
+      },
+      'nacelle-stbd': {
+        title: 'Starboard Nacelle',
+        status: 'Online',
+        statusClass: 'ml-badge--mint',
+        content: `
+          <div class="ml-stat"><span class="ml-stat__label">Plasma Flow</span><span class="ml-stat__value ml-stat__value--up">Nominal</span></div>
+          <div class="ml-stat"><span class="ml-stat__label">Field Coils</span><span class="ml-stat__value">99.1%</span></div>
+          <div class="ml-stat"><span class="ml-stat__label">Bussard Collector</span><span class="ml-stat__value">Active</span></div>
+        `
+      },
+      'deflector': {
+        title: 'Deflector Array',
+        status: 'Degraded',
+        statusClass: 'ml-badge--coral',
+        content: `
+          <div class="ml-stat"><span class="ml-stat__label">Output</span><span class="ml-stat__value" style="color:var(--ml-gold)">74%</span></div>
+          <div class="ml-stat"><span class="ml-stat__label">Issue</span><span class="ml-stat__value" style="color:var(--ml-gold)">Phase Alignment Drift</span></div>
+          <div class="ml-stat"><span class="ml-stat__label">Repair ETA</span><span class="ml-stat__value">2h 15m</span></div>
+        `
+      }
+    };
+
+    document.querySelectorAll('.hotspot').forEach(hs => {
+      hs.addEventListener('click', () => {
+        const sys = systems[hs.dataset.system];
+        const detail = document.getElementById('systemDetail');
+        document.getElementById('detailTitle').textContent = sys.title;
+        const badge = document.getElementById('detailStatus');
+        badge.textContent = sys.status;
+        badge.className = 'ml-badge ' + sys.statusClass;
+        document.getElementById('detailContent').innerHTML = sys.content;
+        detail.classList.toggle('active');
+      });
+    });
+
+    // Close detail on click outside
+    document.querySelector('.ship-diagram').addEventListener('click', (e) => {
+      if (!e.target.closest('.hotspot') && !e.target.closest('.system-detail')) {
+        document.getElementById('systemDetail').classList.remove('active');
+      }
+    });
+
+    // Live updating values
+    function randomFluctuate(base, range) {
+      return (base + (Math.random() - 0.5) * range).toFixed(1);
+    }
+
+    // Log system
+    const logTypes = [
+      { msg: 'Routine sensor sweep complete — no anomalies', type: 'ok' },
+      { msg: 'EPS conduit 47-alpha: power flow nominal', type: 'info' },
+      { msg: 'Transporter room 2: diagnostic cycle complete', type: 'ok' },
+      { msg: 'Long-range sensors: subspace distortion at bearing 247', type: 'info' },
+      { msg: 'Deflector array: phase alignment drift +0.02%', type: 'warning' },
+      { msg: 'Shield emitter grid: auto-calibration in progress', type: 'info' },
+      { msg: 'Warp field geometry: stable', type: 'ok' },
+      { msg: 'Holodeck 2: offline for maintenance', type: 'warning' },
+      { msg: 'Crew quarters deck 7: environmental controls adjusted', type: 'info' },
+      { msg: 'Nacelle plasma injectors: efficiency at 99.4%', type: 'ok' },
+    ];
+
+    let logCount = 0;
+
+    function addLogEntry() {
+      const log = document.getElementById('liveLog');
+      const item = logTypes[Math.floor(Math.random() * logTypes.length)];
+      const now = new Date();
+      const ts = now.toTimeString().slice(0, 8);
+      const entry = document.createElement('div');
+      entry.className = `entry entry--${item.type} ml-animate-fade`;
+      entry.innerHTML = `<span class="ts">${ts}</span>${item.msg}`;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+      logCount++;
+      document.getElementById('logCount').textContent = logCount + ' entries';
+    }
+
+    function clearLog() {
+      document.getElementById('liveLog').innerHTML = '';
+      logCount = 0;
+      document.getElementById('logCount').textContent = '0 entries';
+    }
+
+    // Fluctuate readings
+    function updateReadings() {
+      document.getElementById('mainPower').textContent = randomFluctuate(98, 2) + '%';
+      document.getElementById('coreTemp').textContent = Math.round(3247 + (Math.random() - 0.5) * 40).toLocaleString() + '°K';
+      document.getElementById('speed').textContent = 'Warp ' + randomFluctuate(6.2, 0.3);
+
+      const h = Math.round(127 + (Math.random() - 0.5) * 2);
+      const m = Math.round(4 + (Math.random() - 0.5) * 1);
+      document.getElementById('heading').textContent = `${h} mark ${m}`;
+    }
+
+    // Initial log entries
+    for (let i = 0; i < 5; i++) addLogEntry();
+
+    // Intervals
+    setInterval(addLogEntry, 4000);
+    setInterval(updateReadings, 3000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "modern-lcars",
+  "version": "0.1.0",
+  "description": "Modern LCARS Design System — Discovery/Picard era aesthetics with glass morphism, fluid animations, and holographic UI patterns",
+  "author": "dbest",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/css/modern-lcars.css",
+  "files": [
+    "src/",
+    "examples/"
+  ],
+  "scripts": {
+    "dev": "npx serve . -p 8600",
+    "build": "echo 'CSS-only package — no build step required'"
+  },
+  "keywords": [
+    "lcars",
+    "star-trek",
+    "design-system",
+    "css",
+    "ui",
+    "sci-fi"
+  ]
+}

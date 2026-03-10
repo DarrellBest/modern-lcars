@@ -1,0 +1,121 @@
+/* ============================================================
+   MODERN LCARS — Base Styles
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--ml-font-body);
+  font-size: var(--ml-text-base);
+  color: var(--ml-text);
+  background: var(--ml-void);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── Ambient Scan Line (subtle, modern) ─────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 4px,
+    rgba(0, 0, 0, 0.03) 4px,
+    rgba(0, 0, 0, 0.03) 5px
+  );
+  mix-blend-mode: overlay;
+}
+
+/* ── Selection ──────────────────────────────────────────────── */
+::selection {
+  background: rgba(244, 162, 97, 0.3);
+  color: var(--ml-text-bright);
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ml-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ml-overlay);
+  border-radius: var(--ml-radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ml-primary);
+}
+
+/* ── Typography Resets ──────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ml-font-display);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ml-text-bright);
+  line-height: 1.2;
+}
+
+h1 { font-size: var(--ml-text-3xl); }
+h2 { font-size: var(--ml-text-2xl); }
+h3 { font-size: var(--ml-text-xl); }
+h4 { font-size: var(--ml-text-lg); }
+
+a {
+  color: var(--ml-secondary);
+  text-decoration: none;
+  transition: color var(--ml-duration-fast) var(--ml-ease-out);
+}
+
+a:hover {
+  color: var(--ml-cyan);
+}
+
+code, pre {
+  font-family: var(--ml-font-mono);
+  font-size: var(--ml-text-sm);
+}
+
+pre {
+  background: var(--ml-deep);
+  padding: var(--ml-space-md);
+  border-radius: var(--ml-radius-md);
+  border: var(--ml-border-thin);
+  overflow-x: auto;
+}
+
+/* ── Utility: Mono Label ────────────────────────────────────── */
+.ml-label {
+  font-family: var(--ml-font-mono);
+  font-size: var(--ml-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ml-text-muted);
+}
+
+.ml-value {
+  font-family: var(--ml-font-mono);
+  font-weight: 500;
+  color: var(--ml-gold);
+}

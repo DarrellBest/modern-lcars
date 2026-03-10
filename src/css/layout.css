@@ -1,0 +1,98 @@
+/* ============================================================
+   MODERN LCARS — Layout Utilities
+   ============================================================ */
+
+/* ── App Shell ──────────────────────────────────────────────── */
+.ml-app {
+  display: flex;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.ml-app__sidebar {
+  flex-shrink: 0;
+  padding: var(--ml-space-sm);
+}
+
+.ml-app__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--ml-space-md);
+}
+
+.ml-app__content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ── Grid ───────────────────────────────────────────────────── */
+.ml-grid {
+  display: grid;
+  gap: var(--ml-space-md);
+}
+
+.ml-grid--2 { grid-template-columns: repeat(2, 1fr); }
+.ml-grid--3 { grid-template-columns: repeat(3, 1fr); }
+.ml-grid--4 { grid-template-columns: repeat(4, 1fr); }
+
+.ml-grid--auto {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.ml-col-span-2 { grid-column: span 2; }
+.ml-col-span-3 { grid-column: span 3; }
+.ml-col-full   { grid-column: 1 / -1; }
+
+/* ── Flex Helpers ───────────────────────────────────────────── */
+.ml-flex       { display: flex; }
+.ml-flex-col   { display: flex; flex-direction: column; }
+.ml-items-center { align-items: center; }
+.ml-justify-between { justify-content: space-between; }
+.ml-gap-xs  { gap: var(--ml-space-xs); }
+.ml-gap-sm  { gap: var(--ml-space-sm); }
+.ml-gap-md  { gap: var(--ml-space-md); }
+.ml-gap-lg  { gap: var(--ml-space-lg); }
+
+/* ── Spacing ────────────────────────────────────────────────── */
+.ml-p-sm  { padding: var(--ml-space-sm); }
+.ml-p-md  { padding: var(--ml-space-md); }
+.ml-p-lg  { padding: var(--ml-space-lg); }
+.ml-mb-sm { margin-bottom: var(--ml-space-sm); }
+.ml-mb-md { margin-bottom: var(--ml-space-md); }
+.ml-mb-lg { margin-bottom: var(--ml-space-lg); }
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .ml-grid--2,
+  .ml-grid--3,
+  .ml-grid--4 {
+    grid-template-columns: 1fr;
+  }
+
+  .ml-col-span-2,
+  .ml-col-span-3 {
+    grid-column: span 1;
+  }
+
+  .ml-app {
+    flex-direction: column;
+  }
+
+  .ml-sidebar {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .ml-sidebar__block {
+    writing-mode: horizontal-tb;
+    min-height: auto;
+    border-radius: var(--ml-radius-pill);
+    min-width: 60px;
+  }
+
+  .ml-header__pill-left {
+    width: 60px;
+  }
+}

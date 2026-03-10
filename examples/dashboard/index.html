@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern LCARS — Dashboard</title>
+  <link rel="stylesheet" href="../../src/css/modern-lcars.css">
+  <style>
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--ml-space-md);
+    }
+    @media (max-width: 900px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+    .chart-placeholder {
+      height: 180px;
+      background: linear-gradient(180deg, var(--ml-deep) 0%, var(--ml-surface) 100%);
+      border-radius: var(--ml-radius-md);
+      display: flex;
+      align-items: flex-end;
+      padding: var(--ml-space-sm);
+      gap: 3px;
+      overflow: hidden;
+    }
+    .chart-bar {
+      flex: 1;
+      background: linear-gradient(0deg, var(--ml-amber), var(--ml-gold));
+      border-radius: 3px 3px 0 0;
+      opacity: 0.7;
+      transition: opacity var(--ml-duration-fast) var(--ml-ease-out);
+    }
+    .chart-bar:hover { opacity: 1; }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .status-dot--online  { background: var(--ml-mint); box-shadow: 0 0 6px var(--ml-mint); }
+    .status-dot--warning { background: var(--ml-gold); box-shadow: 0 0 6px var(--ml-gold); }
+    .status-dot--offline { background: var(--ml-coral); box-shadow: 0 0 6px var(--ml-coral); }
+    .metric-ring {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      border: 4px solid var(--ml-overlay);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      margin: 0 auto var(--ml-space-md);
+    }
+    .metric-ring::before {
+      content: '';
+      position: absolute; inset: -4px;
+      border-radius: 50%;
+      border: 4px solid transparent;
+      border-top-color: var(--ml-amber);
+      border-right-color: var(--ml-amber);
+    }
+    .metric-ring .value {
+      font-family: var(--ml-font-display);
+      font-size: var(--ml-text-2xl);
+      font-weight: 700;
+      color: var(--ml-gold);
+    }
+  </style>
+</head>
+<body>
+  <div class="ml-app">
+    <!-- Sidebar -->
+    <div class="ml-app__sidebar">
+      <div class="ml-sidebar ml-stagger">
+        <div class="ml-sidebar__block ml-sidebar__block--amber ml-animate-right" style="flex:2">SYS</div>
+        <div class="ml-sidebar__block ml-sidebar__block--ice ml-animate-right" style="flex:3">OPS</div>
+        <div class="ml-sidebar__block ml-sidebar__block--violet ml-animate-right" style="flex:1">SEC</div>
+        <div class="ml-sidebar__block ml-sidebar__block--gold ml-animate-right" style="flex:2">ENG</div>
+        <div class="ml-sidebar__block ml-sidebar__block--cyan ml-animate-right" style="flex:4">SCI</div>
+        <div class="ml-sidebar__block ml-sidebar__block--peach ml-animate-right" style="flex:1">COM</div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-app__main">
+      <!-- Header -->
+      <div class="ml-header ml-animate-fade">
+        <div class="ml-header__pill-left">
+          <span style="font-family:var(--ml-font-mono);font-size:var(--ml-text-xs);color:var(--ml-void);letter-spacing:0.1em">47634.4</span>
+        </div>
+        <div class="ml-header__body">
+          <span class="ml-header__title">Operations Dashboard</span>
+          <span class="ml-header__subtitle">USS Discovery // NCC-1031</span>
+          <div style="margin-left:auto;display:flex;gap:var(--ml-space-sm);align-items:center">
+            <span class="ml-badge ml-badge--mint">Systems Nominal</span>
+            <span class="ml-tag">SD 47634.44</span>
+          </div>
+        </div>
+        <div class="ml-header__pill-right"></div>
+      </div>
+
+      <!-- Dashboard Content -->
+      <div class="ml-app__content ml-stagger">
+        <!-- Alert -->
+        <div class="ml-alert ml-alert--success ml-animate-up ml-mb-md">
+          All primary systems operating within normal parameters. Warp core efficiency at 97.2%.
+        </div>
+
+        <!-- Top Metrics -->
+        <div class="dashboard-grid ml-mb-md">
+          <div class="ml-panel ml-animate-up" data-accent="amber">
+            <div class="metric-ring">
+              <span class="value">97</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Warp Core Output</span>
+              <span class="ml-stat__value">97.2%</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Dilithium Reserves</span>
+              <span class="ml-stat__value">84.6%</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Antimatter Flow</span>
+              <span class="ml-stat__value ml-stat__value--up">Stable</span>
+            </div>
+          </div>
+
+          <div class="ml-panel ml-animate-up" data-accent="ice">
+            <h4 class="ml-mb-md" style="color:var(--ml-ice)">Tactical Systems</h4>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Shield Strength</span>
+              <span class="ml-stat__value ml-stat__value--up">100%</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Phaser Banks</span>
+              <span class="ml-stat__value">Online</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Torpedo Complement</span>
+              <span class="ml-stat__value">248</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Sensor Range</span>
+              <span class="ml-stat__value">15 ly</span>
+            </div>
+          </div>
+
+          <div class="ml-panel ml-animate-up" data-accent="violet">
+            <h4 class="ml-mb-md" style="color:var(--ml-violet)">Crew Status</h4>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Total Complement</span>
+              <span class="ml-stat__value">136</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">On Duty</span>
+              <span class="ml-stat__value">47</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">In Sickbay</span>
+              <span class="ml-stat__value" style="color:var(--ml-gold)">3</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Away Teams</span>
+              <span class="ml-stat__value">1</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart + Table -->
+        <div class="ml-grid ml-grid--2 ml-mb-md">
+          <div class="ml-panel ml-animate-up" data-accent="cyan">
+            <h4 class="ml-mb-md" style="color:var(--ml-cyan)">Power Distribution</h4>
+            <div class="chart-placeholder" id="powerChart"></div>
+            <div class="ml-flex ml-justify-between ml-p-sm" style="font-family:var(--ml-font-mono);font-size:var(--ml-text-xs);color:var(--ml-text-muted)">
+              <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span>
+            </div>
+          </div>
+
+          <div class="ml-panel ml-animate-up" data-accent="gold">
+            <h4 class="ml-mb-md" style="color:var(--ml-gold)">Subsystem Status</h4>
+            <table class="ml-table">
+              <thead>
+                <tr>
+                  <th>System</th>
+                  <th>Status</th>
+                  <th>Load</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Life Support</td>
+                  <td><span class="status-dot status-dot--online"></span> Online</td>
+                  <td>32%</td>
+                </tr>
+                <tr>
+                  <td>Navigation</td>
+                  <td><span class="status-dot status-dot--online"></span> Online</td>
+                  <td>18%</td>
+                </tr>
+                <tr>
+                  <td>Communications</td>
+                  <td><span class="status-dot status-dot--online"></span> Online</td>
+                  <td>12%</td>
+                </tr>
+                <tr>
+                  <td>Deflector Array</td>
+                  <td><span class="status-dot status-dot--warning"></span> Degraded</td>
+                  <td>74%</td>
+                </tr>
+                <tr>
+                  <td>Holodeck 2</td>
+                  <td><span class="status-dot status-dot--offline"></span> Offline</td>
+                  <td>0%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Bottom: Progress Bars -->
+        <div class="ml-panel ml-animate-up ml-col-full" data-accent="mint">
+          <h4 class="ml-mb-md" style="color:var(--ml-mint)">Resource Allocation</h4>
+          <div class="ml-grid ml-grid--2">
+            <div>
+              <div class="ml-flex ml-justify-between ml-mb-sm">
+                <span class="ml-label">Warp Engines</span>
+                <span class="ml-value">78%</span>
+              </div>
+              <div class="ml-progress ml-mb-md"><div class="ml-progress__fill" style="width:78%"></div></div>
+
+              <div class="ml-flex ml-justify-between ml-mb-sm">
+                <span class="ml-label">Impulse Drive</span>
+                <span class="ml-value">42%</span>
+              </div>
+              <div class="ml-progress ml-mb-md"><div class="ml-progress__fill" style="width:42%"></div></div>
+
+              <div class="ml-flex ml-justify-between ml-mb-sm">
+                <span class="ml-label">Shields</span>
+                <span class="ml-value">100%</span>
+              </div>
+              <div class="ml-progress ml-mb-md"><div class="ml-progress__fill" style="width:100%"></div></div>
+            </div>
+            <div>
+              <div class="ml-flex ml-justify-between ml-mb-sm">
+                <span class="ml-label">Sensors</span>
+                <span class="ml-value">91%</span>
+              </div>
+              <div class="ml-progress ml-progress--ice ml-mb-md"><div class="ml-progress__fill" style="width:91%"></div></div>
+
+              <div class="ml-flex ml-justify-between ml-mb-sm">
+                <span class="ml-label">Transporter</span>
+                <span class="ml-value">65%</span>
+              </div>
+              <div class="ml-progress ml-progress--ice ml-mb-md"><div class="ml-progress__fill" style="width:65%"></div></div>
+
+              <div class="ml-flex ml-justify-between ml-mb-sm">
+                <span class="ml-label">Life Support</span>
+                <span class="ml-value">32%</span>
+              </div>
+              <div class="ml-progress ml-progress--violet ml-mb-md"><div class="ml-progress__fill" style="width:32%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Generate random chart bars
+    const chart = document.getElementById('powerChart');
+    for (let i = 0; i < 48; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'chart-bar';
+      const h = 20 + Math.random() * 80;
+      bar.style.height = h + '%';
+      if (h > 70) {
+        bar.style.background = 'linear-gradient(0deg, var(--ml-coral), var(--ml-gold))';
+      }
+      chart.appendChild(bar);
+    }
+  </script>
+</body>
+</html>

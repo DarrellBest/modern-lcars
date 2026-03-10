@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern LCARS — Component Showcase</title>
+  <link rel="stylesheet" href="../../src/css/modern-lcars.css">
+  <style>
+    .section { margin-bottom: var(--ml-space-2xl); }
+    .section-title {
+      font-family: var(--ml-font-display);
+      font-size: var(--ml-text-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ml-text-muted);
+      margin-bottom: var(--ml-space-lg);
+      padding-bottom: var(--ml-space-sm);
+      border-bottom: 1px solid var(--ml-overlay);
+    }
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: var(--ml-space-sm);
+    }
+    .swatch {
+      height: 64px;
+      border-radius: var(--ml-radius-md);
+      display: flex;
+      align-items: flex-end;
+      padding: var(--ml-space-xs) var(--ml-space-sm);
+      font-family: var(--ml-font-mono);
+      font-size: 10px;
+      color: var(--ml-void);
+      font-weight: 500;
+    }
+    .demo-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--ml-space-sm);
+      align-items: center;
+      margin-bottom: var(--ml-space-md);
+    }
+  </style>
+</head>
+<body>
+  <div class="ml-app">
+    <div class="ml-app__sidebar">
+      <div class="ml-sidebar">
+        <div class="ml-sidebar__block ml-sidebar__block--amber" style="flex:2">CLR</div>
+        <div class="ml-sidebar__block ml-sidebar__block--ice" style="flex:1">TYP</div>
+        <div class="ml-sidebar__block ml-sidebar__block--violet" style="flex:3">CMP</div>
+        <div class="ml-sidebar__block ml-sidebar__block--gold" style="flex:1">FRM</div>
+        <div class="ml-sidebar__block ml-sidebar__block--cyan" style="flex:2">ANI</div>
+      </div>
+    </div>
+
+    <div class="ml-app__main">
+      <div class="ml-header">
+        <div class="ml-header__pill-left">
+          <span style="font-family:var(--ml-font-mono);font-size:var(--ml-text-xs);color:var(--ml-void);letter-spacing:0.1em">v0.1.0</span>
+        </div>
+        <div class="ml-header__body">
+          <span class="ml-header__title">Component Library</span>
+          <span class="ml-header__subtitle">Modern LCARS Design System</span>
+        </div>
+        <div class="ml-header__pill-right"></div>
+      </div>
+
+      <div class="ml-app__content">
+        <!-- Colors -->
+        <div class="section">
+          <div class="section-title">Color Palette</div>
+          <div class="swatch-grid">
+            <div class="swatch" style="background:var(--ml-amber)">Amber</div>
+            <div class="swatch" style="background:var(--ml-gold)">Gold</div>
+            <div class="swatch" style="background:var(--ml-tangerine)">Tangerine</div>
+            <div class="swatch" style="background:var(--ml-peach)">Peach</div>
+            <div class="swatch" style="background:var(--ml-ice)">Ice</div>
+            <div class="swatch" style="background:var(--ml-cyan)">Cyan</div>
+            <div class="swatch" style="background:var(--ml-teal)">Teal</div>
+            <div class="swatch" style="background:var(--ml-sky)">Sky</div>
+            <div class="swatch" style="background:var(--ml-violet)">Violet</div>
+            <div class="swatch" style="background:var(--ml-lavender)">Lavender</div>
+            <div class="swatch" style="background:var(--ml-magenta)">Magenta</div>
+            <div class="swatch" style="background:var(--ml-mint)">Mint</div>
+            <div class="swatch" style="background:var(--ml-coral);color:#fff">Coral</div>
+            <div class="swatch" style="background:var(--ml-cream)">Cream</div>
+          </div>
+        </div>
+
+        <!-- Typography -->
+        <div class="section">
+          <div class="section-title">Typography</div>
+          <div class="ml-panel ml-mb-md" data-accent="amber">
+            <h1 class="ml-mb-sm">Display / 3XL</h1>
+            <h2 class="ml-mb-sm">Heading / 2XL</h2>
+            <h3 class="ml-mb-sm">Section / XL</h3>
+            <h4 class="ml-mb-md">Subsection / LG</h4>
+            <p class="ml-mb-sm">Body text uses Inter for clean readability across all screen densities. Modern LCARS moves away from purely monospaced body text toward a humanist sans-serif while retaining mono for data and labels.</p>
+            <p><code>Monospaced output: JetBrains Mono — SYSTEM READY // SD 47634.44</code></p>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="section">
+          <div class="section-title">Buttons</div>
+          <div class="demo-row">
+            <button class="ml-btn">Primary</button>
+            <button class="ml-btn ml-btn--ice">Ice</button>
+            <button class="ml-btn ml-btn--violet">Violet</button>
+            <button class="ml-btn ml-btn--cyan">Cyan</button>
+            <button class="ml-btn ml-btn--coral">Coral</button>
+            <button class="ml-btn ml-btn--mint">Mint</button>
+          </div>
+          <div class="demo-row">
+            <button class="ml-btn ml-btn--ghost">Ghost</button>
+            <button class="ml-btn ml-btn--lg">Large</button>
+            <button class="ml-btn ml-btn--sm">Small</button>
+          </div>
+        </div>
+
+        <!-- Badges -->
+        <div class="section">
+          <div class="section-title">Badges & Tags</div>
+          <div class="demo-row">
+            <span class="ml-badge">Default</span>
+            <span class="ml-badge ml-badge--ice">Info</span>
+            <span class="ml-badge ml-badge--violet">Science</span>
+            <span class="ml-badge ml-badge--mint">Online</span>
+            <span class="ml-badge ml-badge--coral">Alert</span>
+          </div>
+          <div class="demo-row">
+            <span class="ml-tag">Tag</span>
+            <span class="ml-tag">NCC-1031</span>
+            <span class="ml-tag">SD 47634.44</span>
+          </div>
+        </div>
+
+        <!-- Form Controls -->
+        <div class="section">
+          <div class="section-title">Form Controls</div>
+          <div class="ml-grid ml-grid--2">
+            <div class="ml-panel" data-accent="ice">
+              <h4 class="ml-mb-md" style="color:var(--ml-ice)">Inputs</h4>
+              <div class="ml-mb-md">
+                <label class="ml-label ml-mb-sm" style="display:block">Text Input</label>
+                <input class="ml-input" type="text" placeholder="Enter command...">
+              </div>
+              <div class="ml-mb-md">
+                <label class="ml-label ml-mb-sm" style="display:block">Select</label>
+                <select class="ml-input">
+                  <option>Warp Factor 1</option>
+                  <option>Warp Factor 5</option>
+                  <option>Warp Factor 9</option>
+                  <option>Warp Factor 9.975</option>
+                </select>
+              </div>
+              <div class="ml-mb-md">
+                <label class="ml-label ml-mb-sm" style="display:block">Textarea</label>
+                <textarea class="ml-input" placeholder="Captain's log, supplemental..."></textarea>
+              </div>
+            </div>
+            <div class="ml-panel" data-accent="violet">
+              <h4 class="ml-mb-md" style="color:var(--ml-violet)">Range Sliders</h4>
+              <div class="ml-mb-lg">
+                <div class="ml-flex ml-justify-between ml-mb-sm">
+                  <label class="ml-label">Warp Factor</label>
+                  <span class="ml-value" id="warpVal">5.0</span>
+                </div>
+                <input class="ml-range" type="range" min="0" max="10" step="0.1" value="5" oninput="document.getElementById('warpVal').textContent=parseFloat(this.value).toFixed(1)">
+              </div>
+              <div class="ml-mb-lg">
+                <div class="ml-flex ml-justify-between ml-mb-sm">
+                  <label class="ml-label">Shield Power</label>
+                  <span class="ml-value" id="shieldVal">100%</span>
+                </div>
+                <input class="ml-range" type="range" min="0" max="100" value="100" oninput="document.getElementById('shieldVal').textContent=this.value+'%'">
+              </div>
+              <div class="ml-mb-lg">
+                <div class="ml-flex ml-justify-between ml-mb-sm">
+                  <label class="ml-label">Sensor Gain</label>
+                  <span class="ml-value" id="sensorVal">7.2</span>
+                </div>
+                <input class="ml-range" type="range" min="0" max="15" step="0.1" value="7.2" oninput="document.getElementById('sensorVal').textContent=parseFloat(this.value).toFixed(1)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panels -->
+        <div class="section">
+          <div class="section-title">Panel Variants</div>
+          <div class="ml-grid ml-grid--3">
+            <div class="ml-panel" data-accent="amber">
+              <h4 class="ml-mb-sm" style="color:var(--ml-amber)">Engineering</h4>
+              <p style="font-size:var(--ml-text-sm)">Amber accent panel for engineering and primary systems data.</p>
+            </div>
+            <div class="ml-panel" data-accent="ice">
+              <h4 class="ml-mb-sm" style="color:var(--ml-ice)">Tactical</h4>
+              <p style="font-size:var(--ml-text-sm)">Ice accent for tactical information and sensor data readouts.</p>
+            </div>
+            <div class="ml-panel" data-accent="violet">
+              <h4 class="ml-mb-sm" style="color:var(--ml-violet)">Science</h4>
+              <p style="font-size:var(--ml-text-sm)">Violet accent for science station, analysis, and crew data.</p>
+            </div>
+            <div class="ml-panel" data-accent="cyan">
+              <h4 class="ml-mb-sm" style="color:var(--ml-cyan)">Operations</h4>
+              <p style="font-size:var(--ml-text-sm)">Cyan accent for operations, comms, and coordination panels.</p>
+            </div>
+            <div class="ml-panel" data-accent="mint">
+              <h4 class="ml-mb-sm" style="color:var(--ml-mint)">Medical</h4>
+              <p style="font-size:var(--ml-text-sm)">Mint accent for medical readouts and environmental systems.</p>
+            </div>
+            <div class="ml-panel" data-accent="coral">
+              <h4 class="ml-mb-sm" style="color:var(--ml-coral)">Alert</h4>
+              <p style="font-size:var(--ml-text-sm)">Coral accent for warnings, alerts, and critical status displays.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <div class="section">
+          <div class="section-title">Alerts</div>
+          <div class="ml-alert ml-mb-md">Standard informational alert — all systems nominal.</div>
+          <div class="ml-alert ml-alert--success ml-mb-md">Mission objective completed successfully.</div>
+          <div class="ml-alert ml-alert--warning ml-mb-md">Deflector array operating at reduced capacity.</div>
+          <div class="ml-alert ml-alert--danger ml-mb-md">Red Alert — unauthorized vessel detected in sector 47.</div>
+        </div>
+
+        <!-- Progress Bars -->
+        <div class="section">
+          <div class="section-title">Progress Bars</div>
+          <div class="ml-panel" data-accent="gold">
+            <div class="ml-flex ml-justify-between ml-mb-sm">
+              <span class="ml-label">Default (Amber→Gold)</span>
+              <span class="ml-value">72%</span>
+            </div>
+            <div class="ml-progress ml-mb-lg"><div class="ml-progress__fill" style="width:72%"></div></div>
+            <div class="ml-flex ml-justify-between ml-mb-sm">
+              <span class="ml-label">Ice Variant</span>
+              <span class="ml-value">58%</span>
+            </div>
+            <div class="ml-progress ml-progress--ice ml-mb-lg"><div class="ml-progress__fill" style="width:58%"></div></div>
+            <div class="ml-flex ml-justify-between ml-mb-sm">
+              <span class="ml-label">Violet Variant</span>
+              <span class="ml-value">91%</span>
+            </div>
+            <div class="ml-progress ml-progress--violet ml-mb-lg"><div class="ml-progress__fill" style="width:91%"></div></div>
+          </div>
+        </div>
+
+        <!-- Animations -->
+        <div class="section">
+          <div class="section-title">Animations & Effects</div>
+          <div class="ml-grid ml-grid--3">
+            <div class="ml-panel ml-animate-pulse" data-accent="amber">
+              <h4 class="ml-mb-sm" style="color:var(--ml-amber)">Pulse Glow</h4>
+              <p style="font-size:var(--ml-text-sm)">Subtle ambient pulsing glow for active/live elements.</p>
+            </div>
+            <div class="ml-panel ml-holo" data-accent="ice">
+              <h4 class="ml-mb-sm" style="color:var(--ml-ice)">Holographic</h4>
+              <p style="font-size:var(--ml-text-sm)">Rotating conic gradient shimmer for premium/holographic feel.</p>
+            </div>
+            <div class="ml-panel" data-accent="cyan" style="position:relative;overflow:hidden">
+              <div class="ml-scanner"></div>
+              <h4 class="ml-mb-sm" style="color:var(--ml-cyan)">Scanner</h4>
+              <p style="font-size:var(--ml-text-sm)">Scanning line overlay for active monitoring panels.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="section">
+          <div class="section-title">Data Table</div>
+          <div class="ml-panel" data-accent="gold">
+            <table class="ml-table">
+              <thead>
+                <tr>
+                  <th>Registry</th>
+                  <th>Ship Name</th>
+                  <th>Class</th>
+                  <th>Status</th>
+                  <th>Captain</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color:var(--ml-amber)">NCC-1031</td>
+                  <td>USS Discovery</td>
+                  <td>Crossfield</td>
+                  <td><span class="ml-badge ml-badge--mint">Active</span></td>
+                  <td>Burnham</td>
+                </tr>
+                <tr>
+                  <td style="color:var(--ml-amber)">NCC-1701</td>
+                  <td>USS Enterprise</td>
+                  <td>Constitution</td>
+                  <td><span class="ml-badge ml-badge--mint">Active</span></td>
+                  <td>Pike</td>
+                </tr>
+                <tr>
+                  <td style="color:var(--ml-amber)">NCC-75567</td>
+                  <td>USS Titan</td>
+                  <td>Neo-Constitution</td>
+                  <td><span class="ml-badge ml-badge--mint">Active</span></td>
+                  <td>Seven</td>
+                </tr>
+                <tr>
+                  <td style="color:var(--ml-amber)">NCC-80102</td>
+                  <td>USS Stargazer</td>
+                  <td>Sagan</td>
+                  <td><span class="ml-badge ml-badge--coral">Decommissioned</span></td>
+                  <td>Rios</td>
+                </tr>
+                <tr>
+                  <td style="color:var(--ml-amber)">NCC-75710</td>
+                  <td>USS Cerritos</td>
+                  <td>California</td>
+                  <td><span class="ml-badge ml-badge--ice">In Dock</span></td>
+                  <td>Freeman</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

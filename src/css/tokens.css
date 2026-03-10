@@ -1,0 +1,101 @@
+/* ============================================================
+   MODERN LCARS — Design Tokens
+   Discovery / Picard / SNW era inspired
+   ============================================================ */
+
+:root {
+  /* ── Core Palette ─────────────────────────────────────────── */
+  --ml-void:          #020810;
+  --ml-deep:          #06101e;
+  --ml-surface:       #0a1628;
+  --ml-elevated:      #0f1d35;
+  --ml-overlay:       #152542;
+
+  /* ── Signature Colors ─────────────────────────────────────── */
+  --ml-amber:         #F4A261;
+  --ml-gold:          #E9C46A;
+  --ml-tangerine:     #E76F51;
+  --ml-peach:         #FFBE98;
+
+  --ml-ice:           #76C7F0;
+  --ml-cyan:          #56E3E3;
+  --ml-teal:          #2EC4B6;
+  --ml-sky:           #4EA8DE;
+
+  --ml-violet:        #9B72CF;
+  --ml-lavender:      #C19EE0;
+  --ml-magenta:       #D45DBF;
+
+  --ml-mint:          #80FFDB;
+  --ml-coral:         #FF6B6B;
+  --ml-cream:         #FAF0E6;
+
+  /* ── Semantic ─────────────────────────────────────────────── */
+  --ml-primary:       var(--ml-amber);
+  --ml-secondary:     var(--ml-ice);
+  --ml-accent:        var(--ml-violet);
+  --ml-success:       var(--ml-mint);
+  --ml-warning:       var(--ml-gold);
+  --ml-danger:        var(--ml-coral);
+  --ml-info:          var(--ml-cyan);
+
+  /* ── Text ─────────────────────────────────────────────────── */
+  --ml-text:          #E8DFD0;
+  --ml-text-muted:    #7A8BA4;
+  --ml-text-bright:   #FFFFFF;
+
+  /* ── Glass ────────────────────────────────────────────────── */
+  --ml-glass-bg:      rgba(10, 22, 40, 0.65);
+  --ml-glass-border:  rgba(244, 162, 97, 0.12);
+  --ml-glass-blur:    20px;
+  --ml-glass-shine:   linear-gradient(
+                        135deg,
+                        rgba(255, 255, 255, 0.04) 0%,
+                        rgba(255, 255, 255, 0) 60%
+                      );
+
+  /* ── Borders & Radii ──────────────────────────────────────── */
+  --ml-radius-sm:     6px;
+  --ml-radius-md:     12px;
+  --ml-radius-lg:     20px;
+  --ml-radius-pill:   999px;
+  --ml-radius-elbow:  0 24px 24px 0;
+
+  --ml-border-thin:   1px solid var(--ml-glass-border);
+  --ml-border-accent: 2px solid var(--ml-primary);
+
+  /* ── Spacing ──────────────────────────────────────────────── */
+  --ml-space-xs:      4px;
+  --ml-space-sm:      8px;
+  --ml-space-md:      16px;
+  --ml-space-lg:      24px;
+  --ml-space-xl:      40px;
+  --ml-space-2xl:     64px;
+
+  /* ── Typography ───────────────────────────────────────────── */
+  --ml-font-display:  'Chakra Petch', 'Orbitron', sans-serif;
+  --ml-font-body:     'Inter', 'Share Tech Mono', sans-serif;
+  --ml-font-mono:     'JetBrains Mono', 'Share Tech Mono', monospace;
+
+  --ml-text-xs:       0.7rem;
+  --ml-text-sm:       0.8rem;
+  --ml-text-base:     0.95rem;
+  --ml-text-lg:       1.15rem;
+  --ml-text-xl:       1.5rem;
+  --ml-text-2xl:      2rem;
+  --ml-text-3xl:      3rem;
+
+  /* ── Motion ───────────────────────────────────────────────── */
+  --ml-ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
+  --ml-ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ml-duration-fast: 150ms;
+  --ml-duration-med:  300ms;
+  --ml-duration-slow: 600ms;
+
+  /* ── Elevation (glow) ─────────────────────────────────────── */
+  --ml-glow-sm:       0 0 8px rgba(244, 162, 97, 0.15);
+  --ml-glow-md:       0 0 20px rgba(244, 162, 97, 0.2);
+  --ml-glow-lg:       0 0 40px rgba(244, 162, 97, 0.25);
+  --ml-glow-ice:      0 0 20px rgba(118, 199, 240, 0.2);
+  --ml-glow-violet:   0 0 20px rgba(155, 114, 207, 0.2);
+}
