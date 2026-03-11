@@ -347,6 +347,106 @@
   animation: ml-tick var(--ml-duration-med) var(--ml-ease-out);
 }
 
+/* ── Cinematic Page Transitions ─────────────────────────────── */
+@keyframes ml-iris-open {
+  0%   { clip-path: circle(0% at 50% 50%); opacity: 0; }
+  100% { clip-path: circle(75% at 50% 50%); opacity: 1; }
+}
+
+@keyframes ml-iris-close {
+  0%   { clip-path: circle(75% at 50% 50%); opacity: 1; }
+  100% { clip-path: circle(0% at 50% 50%); opacity: 0; }
+}
+
+.ml-animate-iris-open {
+  animation: ml-iris-open var(--ml-duration-cinematic, 1000ms) var(--ml-ease-cinematic, cubic-bezier(0.22, 0.61, 0.36, 1)) both;
+}
+
+.ml-animate-iris-close {
+  animation: ml-iris-close var(--ml-duration-cinematic, 1000ms) var(--ml-ease-cinematic, cubic-bezier(0.22, 0.61, 0.36, 1)) both;
+}
+
+/* ── LCARS Segment Reveal ──────────────────────────────────── */
+@keyframes ml-segment-reveal {
+  0%   { transform: scaleX(0); opacity: 0; }
+  50%  { opacity: 1; }
+  100% { transform: scaleX(1); opacity: 1; }
+}
+
+.ml-animate-segment {
+  transform-origin: left center;
+  animation: ml-segment-reveal var(--ml-duration-slow) var(--ml-ease-out) both;
+}
+
+/* ── Data Cascade (vertical data stream) ───────────────────── */
+@keyframes ml-data-cascade {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 200px; }
+}
+
+.ml-data-cascade {
+  background-image: repeating-linear-gradient(
+    180deg,
+    rgba(86, 227, 227, 0.05) 0px,
+    transparent 1px,
+    transparent 8px,
+    rgba(86, 227, 227, 0.05) 9px
+  );
+  background-size: 100% 200px;
+  animation: ml-data-cascade 3s linear infinite;
+}
+
+/* ── Viewscreen Activate (dramatic reveal) ─────────────────── */
+@keyframes ml-viewscreen-on {
+  0%   { transform: scaleY(0.005) scaleX(0.3); opacity: 0.2; filter: brightness(3); }
+  30%  { transform: scaleY(0.005) scaleX(1); opacity: 0.6; }
+  50%  { transform: scaleY(1) scaleX(1); opacity: 0.8; filter: brightness(1.5); }
+  100% { transform: scaleY(1) scaleX(1); opacity: 1; filter: brightness(1); }
+}
+
+.ml-animate-viewscreen {
+  animation: ml-viewscreen-on 0.8s var(--ml-ease-out) both;
+}
+
+/* ── Breathing Glow (ambient life indicator) ───────────────── */
+@keyframes ml-breathe {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
+.ml-animate-breathe {
+  animation: ml-breathe 3s ease-in-out infinite;
+}
+
+/* ── Alert Klaxon Flash ────────────────────────────────────── */
+@keyframes ml-klaxon {
+  0%, 20%, 100% { background-color: transparent; }
+  10%           { background-color: rgba(255, 107, 107, 0.06); }
+}
+
+.ml-animate-klaxon {
+  animation: ml-klaxon 2s ease-in-out infinite;
+}
+
+/* ── System Boot Sequence ──────────────────────────────────── */
+@keyframes ml-boot-line {
+  0%   { width: 0; opacity: 0; }
+  10%  { opacity: 1; }
+  100% { width: 100%; opacity: 1; }
+}
+
+.ml-animate-boot > * {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ml-animate-boot > *:nth-child(1) { animation: ml-boot-line 0.6s var(--ml-ease-out) 0.1s both; }
+.ml-animate-boot > *:nth-child(2) { animation: ml-boot-line 0.6s var(--ml-ease-out) 0.25s both; }
+.ml-animate-boot > *:nth-child(3) { animation: ml-boot-line 0.6s var(--ml-ease-out) 0.4s both; }
+.ml-animate-boot > *:nth-child(4) { animation: ml-boot-line 0.6s var(--ml-ease-out) 0.55s both; }
+.ml-animate-boot > *:nth-child(5) { animation: ml-boot-line 0.6s var(--ml-ease-out) 0.7s both; }
+.ml-animate-boot > *:nth-child(6) { animation: ml-boot-line 0.6s var(--ml-ease-out) 0.85s both; }
+
 /* ── Reduced Motion ────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .ml-animate-fade,
@@ -369,7 +469,14 @@
 
   .ml-energy-flow,
   .ml-warp-streaks::before,
-  .ml-warp-streaks::after {
+  .ml-warp-streaks::after,
+  .ml-animate-iris-open,
+  .ml-animate-iris-close,
+  .ml-animate-segment,
+  .ml-animate-viewscreen,
+  .ml-animate-breathe,
+  .ml-animate-klaxon,
+  .ml-data-cascade {
     animation: none !important;
   }
 

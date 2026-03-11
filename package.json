@@ -1,14 +1,16 @@
 {
   "name": "modern-lcars",
-  "version": "0.1.0",
-  "description": "Modern LCARS Design System — Discovery/Picard era aesthetics with glass morphism, fluid animations, and holographic UI patterns",
+  "version": "0.2.0",
+  "description": "A production-quality LCARS design system for the Discovery/Picard/Starfleet Academy era — glass morphism, cinematic animations, holographic effects, department-coded theming, and 40+ components. Zero dependencies, pure CSS.",
   "author": "dbest",
   "license": "MIT",
   "type": "module",
   "main": "src/css/modern-lcars.css",
+  "style": "src/css/modern-lcars.css",
   "files": [
     "src/",
-    "examples/"
+    "examples/",
+    "DESIGN-SYSTEM.md"
   ],
   "scripts": {
     "dev": "npx serve . -p 8600",
@@ -20,6 +22,25 @@
     "design-system",
     "css",
     "ui",
-    "sci-fi"
-  ]
+    "sci-fi",
+    "glass-morphism",
+    "dark-theme",
+    "dashboard",
+    "futuristic",
+    "starship",
+    "federation",
+    "components",
+    "animations",
+    "picard",
+    "discovery",
+    "starfleet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DarrellBest/modern-lcars"
+  },
+  "homepage": "https://github.com/DarrellBest/modern-lcars#readme",
+  "bugs": {
+    "url": "https://github.com/DarrellBest/modern-lcars/issues"
+  }
 }

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern LCARS — Sickbay / Medical</title>
+  <link rel="stylesheet" href="../../src/css/modern-lcars.css">
+  <style>
+    .med-grid {
+      display: grid;
+      grid-template-columns: 300px 1fr 300px;
+      grid-template-rows: auto 1fr;
+      gap: var(--ml-space-md);
+      height: calc(100vh - 100px);
+      min-height: 600px;
+    }
+
+    @media (max-width: 1100px) {
+      .med-grid {
+        grid-template-columns: 1fr 1fr;
+        height: auto;
+      }
+      .med-grid > *:first-child { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 768px) {
+      .med-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Triage color bars */
+    .triage-bar {
+      display: flex;
+      gap: 2px;
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: var(--ml-space-sm);
+    }
+
+    .triage-bar__seg {
+      flex: 1;
+      transition: background var(--ml-duration-fast) var(--ml-ease-out);
+    }
+
+    .triage-bar__seg--stable  { background: var(--ml-mint); }
+    .triage-bar__seg--fair    { background: var(--ml-gold); }
+    .triage-bar__seg--serious { background: var(--ml-tangerine); }
+    .triage-bar__seg--critical{ background: var(--ml-coral); animation: ml-blink 1.5s ease-in-out infinite; }
+
+    /* EKG line animation */
+    @keyframes ekg-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .ekg-scroll {
+      animation: ekg-scroll 3s linear infinite;
+    }
+
+    /* Medication schedule row */
+    .med-schedule {
+      display: flex;
+      align-items: center;
+      gap: var(--ml-space-sm);
+      padding: var(--ml-space-xs) 0;
+      border-bottom: 1px solid rgba(128, 255, 219, 0.06);
+    }
+
+    .med-schedule:last-child { border-bottom: none; }
+
+    .med-schedule__time {
+      width: 48px;
+      font-family: var(--ml-font-mono);
+      font-size: var(--ml-text-xs);
+      color: var(--ml-text-dim);
+      flex-shrink: 0;
+    }
+
+    .med-schedule__name {
+      flex: 1;
+      font-family: var(--ml-font-mono);
+      font-size: var(--ml-text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--ml-text);
+    }
+
+    .med-schedule__dose {
+      font-family: var(--ml-font-mono);
+      font-size: var(--ml-text-xs);
+      color: var(--ml-mint);
+      flex-shrink: 0;
+    }
+
+    .med-schedule__status {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .med-schedule__status--done    { background: var(--ml-mint); }
+    .med-schedule__status--pending { background: var(--ml-gold); }
+    .med-schedule__status--overdue { background: var(--ml-coral); animation: ml-blink 1.5s ease-in-out infinite; }
+  </style>
+</head>
+<body data-condition="green">
+  <div class="ml-app">
+    <!-- Sidebar -->
+    <div class="ml-app__sidebar">
+      <div class="ml-sidebar ml-sidebar--wide ml-stagger">
+        <div class="ml-sidebar__block ml-sidebar__block--mint ml-animate-right" style="flex:3">SICKBAY</div>
+        <div class="ml-sidebar__block ml-sidebar__block--teal ml-animate-right" style="flex:2">TRIAGE</div>
+        <div class="ml-sidebar__block ml-sidebar__block--lavender ml-animate-right" style="flex:2">LAB</div>
+        <div class="ml-sidebar__block ml-sidebar__block--ice ml-animate-right" style="flex:1">SURGERY</div>
+        <div class="ml-sidebar__block ml-sidebar__block--violet ml-animate-right" style="flex:1">PHARMACY</div>
+        <div class="ml-sidebar__block ml-sidebar__block--peach ml-animate-right" style="flex:1">CREW REC</div>
+        <div class="ml-sidebar__block ml-sidebar__block--gold ml-animate-right" style="flex:1">QUARANTINE</div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-app__main">
+      <!-- Header -->
+      <div class="ml-header ml-animate-fade">
+        <div class="ml-header__pill-left" style="background:var(--ml-mint)">
+          <span style="font-family:var(--ml-font-mono);font-size:var(--ml-text-xs);color:var(--ml-void);letter-spacing:0.1em">MED</span>
+        </div>
+        <div class="ml-header__body" style="border-top-color:var(--ml-mint);border-bottom-color:var(--ml-teal)">
+          <span class="ml-header__title">Sickbay — Primary</span>
+          <span class="ml-header__subtitle">USS Titan // Deck 7</span>
+          <div style="margin-left:auto;display:flex;gap:var(--ml-space-sm);align-items:center">
+            <span class="ml-badge ml-badge--mint">CMO On Duty</span>
+            <span class="ml-tag">Biobeds: 3/8 Active</span>
+          </div>
+        </div>
+        <div class="ml-header__pill-right" style="background:var(--ml-teal)"></div>
+      </div>
+
+      <!-- Medical Grid -->
+      <div class="ml-app__content">
+        <!-- Triage Overview Bar -->
+        <div class="ml-panel ml-animate-up ml-mb-md" data-accent="mint">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--ml-space-sm)">
+            <h4 style="color:var(--ml-mint);margin:0">Crew Health Overview</h4>
+            <div style="display:flex;gap:var(--ml-space-md);align-items:center">
+              <span class="ml-label" style="display:flex;align-items:center;gap:4px"><span class="ml-dot ml-dot--ok"></span> 344 Healthy</span>
+              <span class="ml-label" style="display:flex;align-items:center;gap:4px"><span class="ml-dot ml-dot--warn"></span> 4 Treated</span>
+              <span class="ml-label" style="display:flex;align-items:center;gap:4px"><span class="ml-dot ml-dot--err"></span> 2 Critical</span>
+            </div>
+          </div>
+          <div class="triage-bar">
+            <div class="triage-bar__seg triage-bar__seg--stable" style="flex:344"></div>
+            <div class="triage-bar__seg triage-bar__seg--fair" style="flex:4"></div>
+            <div class="triage-bar__seg triage-bar__seg--critical" style="flex:2"></div>
+          </div>
+        </div>
+
+        <div class="med-grid ml-stagger">
+
+          <!-- LEFT: Patient List -->
+          <div class="ml-panel ml-animate-up" data-accent="mint" style="grid-row: 1 / 3">
+            <div class="ml-panel__title">Active Patients</div>
+            <div class="ml-crew-list" id="patientList">
+              <!-- Generated by JS -->
+            </div>
+          </div>
+
+          <!-- CENTER: Active Bio-Monitor -->
+          <div class="ml-flex-col ml-gap-md">
+            <div class="ml-bio-readout ml-animate-up" id="activeBioReadout">
+              <div class="ml-bio-readout__header">
+                <span class="ml-bio-readout__patient" id="activePatientName">Lt. Cmdr. Torres, B'Elanna</span>
+                <span class="ml-bio-readout__species" id="activePatientSpecies">Klingon-Human Hybrid</span>
+              </div>
+              <div class="ml-bio-readout__ekg">
+                <svg viewBox="0 0 800 40" preserveAspectRatio="none">
+                  <g class="ekg-scroll">
+                    <path class="ml-bio-readout__ekg-line" d="M0,20 L30,20 L35,20 L40,5 L45,35 L50,15 L55,25 L60,20 L90,20 L130,20 L135,20 L140,5 L145,35 L150,15 L155,25 L160,20 L190,20 L230,20 L235,20 L240,5 L245,35 L250,15 L255,25 L260,20 L290,20 L330,20 L335,20 L340,5 L345,35 L350,15 L355,25 L360,20 L390,20 L430,20 L435,20 L440,5 L445,35 L450,15 L455,25 L460,20 L490,20 L530,20 L535,20 L540,5 L545,35 L550,15 L555,25 L560,20 L590,20 L630,20 L635,20 L640,5 L645,35 L650,15 L655,25 L660,20 L690,20 L730,20 L735,20 L740,5 L745,35 L750,15 L755,25 L760,20 L800,20" />
+                  </g>
+                </svg>
+              </div>
+              <div class="ml-bio-readout__vitals" id="activeVitals">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+
+            <!-- Sensor Array for detailed scans -->
+            <div class="ml-panel ml-animate-up" data-accent="violet">
+              <div class="ml-panel__title">Biomedical Sensor Array</div>
+              <div class="ml-sensor-array" id="bioSensors">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+
+            <!-- Treatment Log -->
+            <div class="ml-panel ml-animate-up" data-accent="teal">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--ml-space-md)">
+                <h4 style="color:var(--ml-teal);margin:0">Treatment Log</h4>
+                <span class="ml-tag">Today</span>
+              </div>
+              <div class="ml-timeline" id="treatmentLog">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: Pharmacy & Supplies -->
+          <div class="ml-flex-col ml-gap-md" style="grid-row: 1 / 3">
+            <div class="ml-panel ml-animate-up" data-accent="lavender">
+              <div class="ml-panel__title">Medication Schedule</div>
+              <div id="medSchedule">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+
+            <div class="ml-panel ml-animate-up" data-accent="gold">
+              <div class="ml-panel__title">Medical Supplies</div>
+              <div class="ml-stat"><span class="ml-stat__label">Dermal Regen</span><span class="ml-stat__value ml-stat__value--up">94%</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Hyposprays</span><span class="ml-stat__value">248</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Blood Plasma</span><span class="ml-stat__value">167 units</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Cordrazine</span><span class="ml-stat__value" style="color:var(--ml-gold)">Low</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Tricordrazine</span><span class="ml-stat__value ml-stat__value--up">Adequate</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Biobeds Avail</span><span class="ml-stat__value">5/8</span></div>
+              <div class="ml-divider"></div>
+              <div class="ml-stat"><span class="ml-stat__label">Quarantine</span><span class="ml-stat__value ml-stat__value--up">Clear</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Containment</span><span class="ml-stat__value ml-stat__value--up">Sealed</span></div>
+            </div>
+
+            <div class="ml-panel ml-animate-up" data-accent="ice">
+              <div class="ml-panel__title">Sickbay Systems</div>
+              <div class="ml-diagnostic" id="sickbaySystems">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Patient Data ────────────────────────────────────────
+    const patients = [
+      { name: 'Lt.Cmdr. Torres, B\'Elanna', rank: 'Lt. Commander', species: 'Klingon-Human', status: 'medical', condition: 'Plasma burn — Deck 11', vitals: { hr: 88, bp: '142/91', temp: 37.4, o2: 97, resp: 18, cortisol: 4.2 } },
+      { name: 'Ens. Sato, Hoshi', rank: 'Ensign', species: 'Human', status: 'medical', condition: 'Inner ear inflammation', vitals: { hr: 72, bp: '118/76', temp: 37.1, o2: 99, resp: 14, cortisol: 2.8 } },
+      { name: 'Lt. Vilix\'pran', rank: 'Lieutenant', species: 'Cardassian', status: 'active', condition: 'Post-surgical recovery', vitals: { hr: 64, bp: '108/68', temp: 36.8, o2: 98, resp: 12, cortisol: 3.1 } },
+    ];
+
+    function initPatients() {
+      const container = document.getElementById('patientList');
+      patients.forEach((p, i) => {
+        const initials = p.name.split(',')[0].split('.').pop().trim().charAt(0) +
+                         (p.name.split(',')[1] ? p.name.split(',')[1].trim().charAt(0) : '');
+        const el = document.createElement('div');
+        el.className = 'ml-crew-member';
+        el.style.cursor = 'pointer';
+        el.onclick = () => selectPatient(i);
+        el.innerHTML = `
+          <div class="ml-crew-member__avatar">${initials}</div>
+          <div class="ml-crew-member__info">
+            <div class="ml-crew-member__name">${p.name}</div>
+            <div class="ml-crew-member__rank">${p.condition}</div>
+          </div>
+          <div class="ml-crew-member__status ml-crew-member__status--${p.status}"></div>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    function selectPatient(idx) {
+      const p = patients[idx];
+      document.getElementById('activePatientName').textContent = p.name;
+      document.getElementById('activePatientSpecies').textContent = p.species;
+      updateVitals(p.vitals);
+    }
+
+    function updateVitals(v) {
+      const container = document.getElementById('activeVitals');
+      container.innerHTML = '';
+      const vitals = [
+        { label: 'Heart Rate', value: v.hr, unit: 'BPM', alert: v.hr > 100 ? 'warning' : '' },
+        { label: 'Blood Pressure', value: v.bp, unit: 'mmHg', alert: '' },
+        { label: 'Core Temp', value: v.temp + '°', unit: 'Celsius', alert: v.temp > 38 ? 'warning' : '' },
+        { label: 'O₂ Saturation', value: v.o2, unit: '%', alert: v.o2 < 95 ? 'critical' : '' },
+        { label: 'Respiration', value: v.resp, unit: '/min', alert: '' },
+        { label: 'Cortisol', value: v.cortisol, unit: 'μg/dL', alert: v.cortisol > 5 ? 'warning' : '' },
+      ];
+
+      vitals.forEach(vital => {
+        const el = document.createElement('div');
+        el.className = 'ml-bio-vital';
+        el.innerHTML = `
+          <span class="ml-bio-vital__label">${vital.label}</span>
+          <span class="ml-bio-vital__value" ${vital.alert ? `data-alert="${vital.alert}"` : ''}>${vital.value}</span>
+          <span class="ml-bio-vital__unit">${vital.unit}</span>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    // ── Bio Sensors ─────────────────────────────────────────
+    const bioSensors = [
+      { label: 'Neural', band: 'em', pct: 72 },
+      { label: 'Cellular', band: 'subspace', pct: 88 },
+      { label: 'Skeletal', band: 'gravimetric', pct: 95 },
+      { label: 'Cardio', band: 'tachyon', pct: 81 },
+      { label: 'Neuro', band: 'neutrino', pct: 64 },
+    ];
+
+    function initBioSensors() {
+      const container = document.getElementById('bioSensors');
+      bioSensors.forEach(s => {
+        const el = document.createElement('div');
+        el.className = `ml-sensor-band ml-sensor-band--${s.band}`;
+        el.innerHTML = `
+          <span class="ml-sensor-band__label">${s.label}</span>
+          <div class="ml-sensor-band__bar">
+            <div class="ml-sensor-band__fill" style="width:${s.pct}%"></div>
+          </div>
+          <span class="ml-sensor-band__value">${s.pct}%</span>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    // ── Treatment Log ───────────────────────────────────────
+    const treatments = [
+      { time: '15:30', title: 'Dermal regenerator applied — Lt.Cmdr. Torres', type: 'ok' },
+      { time: '15:15', title: 'Cortisone administered — Ens. Sato (20mg hypo)', type: 'info' },
+      { time: '14:45', title: 'Post-op scan: Lt. Vilix\'pran — recovery nominal', type: 'ok' },
+      { time: '14:20', title: 'Plasma burn treatment initiated — Lt.Cmdr. Torres', type: 'warning', detail: 'Second-degree burns across left forearm — plasma conduit rupture' },
+      { time: '14:00', title: 'Shift change: Dr. Bashir assuming CMO watch', type: 'info' },
+    ];
+
+    function initTreatmentLog() {
+      const tl = document.getElementById('treatmentLog');
+      treatments.forEach(e => {
+        const item = document.createElement('div');
+        item.className = 'ml-timeline__item ml-animate-fade';
+        item.innerHTML = `
+          <div class="ml-timeline__dot ml-timeline__dot--${e.type}"></div>
+          <div class="ml-timeline__time">${e.time}</div>
+          <div class="ml-timeline__title">${e.title}</div>
+          ${e.detail ? `<div class="ml-timeline__detail">${e.detail}</div>` : ''}
+        `;
+        tl.appendChild(item);
+      });
+    }
+
+    // ── Medication Schedule ─────────────────────────────────
+    const medications = [
+      { time: '16:00', name: 'Cortisone — Sato', dose: '20mg', status: 'pending' },
+      { time: '15:30', name: 'Dermaline gel — Torres', dose: 'Topical', status: 'done' },
+      { time: '15:00', name: 'Kelotane — Torres', dose: '15mg', status: 'done' },
+      { time: '14:30', name: 'Lectrazine — Vilix\'pran', dose: '5mg', status: 'done' },
+      { time: '18:00', name: 'Cortisone — Sato', dose: '20mg', status: 'pending' },
+      { time: '20:00', name: 'Kelotane — Torres', dose: '15mg', status: 'pending' },
+    ];
+
+    function initMedSchedule() {
+      const container = document.getElementById('medSchedule');
+      medications.forEach(m => {
+        const el = document.createElement('div');
+        el.className = 'med-schedule';
+        el.innerHTML = `
+          <div class="med-schedule__status med-schedule__status--${m.status}"></div>
+          <span class="med-schedule__time">${m.time}</span>
+          <span class="med-schedule__name">${m.name}</span>
+          <span class="med-schedule__dose">${m.dose}</span>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    // ── Sickbay Systems ─────────────────────────────────────
+    const systems = [
+      { system: 'Biobed Array', level: 'nominal', status: '5/8 Avail' },
+      { system: 'Surgical Suite', level: 'nominal', status: 'Standby' },
+      { system: 'Imaging Scanner', level: 'nominal', status: 'Ready' },
+      { system: 'Containment Field', level: 'nominal', status: 'Active' },
+      { system: 'Stasis Units', level: 'nominal', status: '4/4 Avail' },
+      { system: 'EMH Matrix', level: 'advisory', status: 'Update Due' },
+    ];
+
+    function initSystems() {
+      const container = document.getElementById('sickbaySystems');
+      systems.forEach(s => {
+        const row = document.createElement('div');
+        row.className = 'ml-diagnostic__row';
+        row.innerHTML = `
+          <div class="ml-diagnostic__indicator" data-level="${s.level}"></div>
+          <span class="ml-diagnostic__system">${s.system}</span>
+          <span class="ml-diagnostic__status" data-level="${s.level}">${s.status}</span>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    // ── Live Vital Fluctuation ──────────────────────────────
+    function liveVitals() {
+      const p = patients[0];
+      p.vitals.hr = Math.round(86 + Math.random() * 6);
+      p.vitals.temp = +(37.3 + (Math.random() - 0.5) * 0.4).toFixed(1);
+      p.vitals.o2 = Math.round(96 + Math.random() * 3);
+      p.vitals.resp = Math.round(16 + (Math.random() - 0.5) * 4);
+      p.vitals.cortisol = +(4.0 + (Math.random() - 0.5) * 1.2).toFixed(1);
+      updateVitals(p.vitals);
+    }
+
+    // ── Init ────────────────────────────────────────────────
+    initPatients();
+    updateVitals(patients[0].vitals);
+    initBioSensors();
+    initTreatmentLog();
+    initMedSchedule();
+    initSystems();
+    setInterval(liveVitals, 3000);
+  </script>
+</body>
+</html>

@@ -1,6 +1,11 @@
 /* ============================================================
    MODERN LCARS — Design Tokens
-   Discovery / Picard / SNW era inspired
+   Discovery / Picard / SNW / Starfleet Academy era inspired
+
+   A complete design token system for building Federation-grade
+   interfaces. Every visual property flows from these tokens,
+   enabling consistent theming across departments, alert states,
+   and display contexts.
    ============================================================ */
 
 :root {
@@ -30,6 +35,14 @@
   --ml-coral:         #FF6B6B;
   --ml-cream:         #FAF0E6;
 
+  /* ── Extended Palette (Picard/Academy era) ──────────────────── */
+  --ml-azure:         #3A86FF;
+  --ml-rose:          #FF6B9D;
+  --ml-lime:          #AAFF00;
+  --ml-plasma:        #E040FB;
+  --ml-silver:        #A8B8C8;
+  --ml-bronze:        #CD7F32;
+
   /* ── Semantic ─────────────────────────────────────────────── */
   --ml-primary:       var(--ml-amber);
   --ml-secondary:     var(--ml-ice);
@@ -38,6 +51,21 @@
   --ml-warning:       var(--ml-gold);
   --ml-danger:        var(--ml-coral);
   --ml-info:          var(--ml-cyan);
+
+  /* ── Department Color Assignments ──────────────────────────── *
+   * These follow Starfleet department coding conventions.
+   * Each department has a primary + glow for consistent theming.
+   * ──────────────────────────────────────────────────────────── */
+  --ml-dept-command:     var(--ml-amber);
+  --ml-dept-tactical:    var(--ml-ice);
+  --ml-dept-operations:  var(--ml-cyan);
+  --ml-dept-science:     var(--ml-violet);
+  --ml-dept-engineering: var(--ml-gold);
+  --ml-dept-medical:     var(--ml-mint);
+  --ml-dept-security:    var(--ml-tangerine);
+  --ml-dept-comms:       var(--ml-peach);
+  --ml-dept-navigation:  var(--ml-sky);
+  --ml-dept-counselor:   var(--ml-lavender);
 
   /* ── Text ─────────────────────────────────────────────────── */
   --ml-text:          #E8DFD0;
@@ -55,6 +83,7 @@
                         rgba(255, 255, 255, 0.01) 50%,
                         rgba(255, 255, 255, 0) 100%
                       );
+  --ml-glass-frosted: rgba(10, 22, 40, 0.55);
 
   /* ── Borders & Radii ──────────────────────────────────────── */
   --ml-radius-sm:     6px;
@@ -67,18 +96,21 @@
   --ml-border-accent: 2px solid var(--ml-primary);
 
   /* ── Spacing ──────────────────────────────────────────────── */
+  --ml-space-2xs:     2px;
   --ml-space-xs:      4px;
   --ml-space-sm:      8px;
   --ml-space-md:      16px;
   --ml-space-lg:      24px;
   --ml-space-xl:      40px;
   --ml-space-2xl:     64px;
+  --ml-space-3xl:     96px;
 
   /* ── Typography ───────────────────────────────────────────── */
   --ml-font-display:  'Chakra Petch', 'Orbitron', sans-serif;
   --ml-font-body:     'Inter', system-ui, sans-serif;
   --ml-font-mono:     'JetBrains Mono', 'Share Tech Mono', monospace;
 
+  --ml-text-2xs:      0.6rem;
   --ml-text-xs:       0.7rem;
   --ml-text-sm:       0.8rem;
   --ml-text-base:     0.95rem;
@@ -86,13 +118,24 @@
   --ml-text-xl:       1.5rem;
   --ml-text-2xl:      2rem;
   --ml-text-3xl:      3rem;
+  --ml-text-4xl:      4rem;
+  --ml-text-5xl:      5.5rem;
+
+  --ml-leading-tight:  1.15;
+  --ml-leading-normal: 1.5;
+  --ml-leading-relaxed: 1.7;
 
   /* ── Motion ───────────────────────────────────────────────── */
   --ml-ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
   --ml-ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ml-ease-cinematic: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ml-ease-snap:     cubic-bezier(0.5, 0, 0, 1);
+  --ml-duration-instant: 80ms;
   --ml-duration-fast: 150ms;
   --ml-duration-med:  300ms;
   --ml-duration-slow: 600ms;
+  --ml-duration-cinematic: 1000ms;
+  --ml-duration-dramatic: 1600ms;
 
   /* ── Elevation (glow + shadow) ────────────────────────────── */
   --ml-glow-sm:       0 0 8px rgba(244, 162, 97, 0.15);
@@ -100,10 +143,14 @@
   --ml-glow-lg:       0 0 40px rgba(244, 162, 97, 0.25);
   --ml-glow-ice:      0 0 20px rgba(118, 199, 240, 0.2);
   --ml-glow-violet:   0 0 20px rgba(155, 114, 207, 0.2);
+  --ml-glow-mint:     0 0 20px rgba(128, 255, 219, 0.2);
+  --ml-glow-coral:    0 0 20px rgba(255, 107, 107, 0.2);
+  --ml-glow-cyan:     0 0 20px rgba(86, 227, 227, 0.2);
 
   --ml-shadow-sm:     0 2px 8px rgba(0, 0, 0, 0.3);
   --ml-shadow-md:     0 4px 20px rgba(0, 0, 0, 0.4);
   --ml-shadow-lg:     0 8px 40px rgba(0, 0, 0, 0.5);
+  --ml-shadow-dramatic: 0 16px 60px rgba(0, 0, 0, 0.65);
 
   /* ── Z-Index Scale ────────────────────────────────────────── */
   --ml-z-base:        0;
@@ -117,4 +164,26 @@
   /* ── State ────────────────────────────────────────────────── */
   --ml-disabled-opacity: 0.4;
   --ml-focus-ring:    0 0 0 3px rgba(244, 162, 97, 0.2);
+
+  /* ── Data Visualization ────────────────────────────────────── */
+  --ml-chart-1:       var(--ml-amber);
+  --ml-chart-2:       var(--ml-ice);
+  --ml-chart-3:       var(--ml-mint);
+  --ml-chart-4:       var(--ml-violet);
+  --ml-chart-5:       var(--ml-cyan);
+  --ml-chart-6:       var(--ml-gold);
+  --ml-chart-7:       var(--ml-peach);
+  --ml-chart-8:       var(--ml-magenta);
+
+  /* ── LCARS Geometry Constants ──────────────────────────────── */
+  --ml-elbow-width:   80px;
+  --ml-elbow-radius:  24px;
+  --ml-bar-height:    24px;
+  --ml-bar-height-sm: 14px;
+  --ml-bar-height-lg: 36px;
+  --ml-sidebar-width: 80px;
+  --ml-sidebar-width-wide: 140px;
+  --ml-header-height: 48px;
+  --ml-pill-radius:   var(--ml-radius-pill);
+  --ml-segment-gap:   3px;
 }

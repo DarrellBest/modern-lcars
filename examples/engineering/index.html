@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern LCARS — Main Engineering</title>
+  <link rel="stylesheet" href="../../src/css/modern-lcars.css">
+  <style>
+    .eng-grid {
+      display: grid;
+      grid-template-columns: 1fr 240px 1fr;
+      grid-template-rows: auto auto 1fr;
+      gap: var(--ml-space-md);
+      height: calc(100vh - 100px);
+      min-height: 650px;
+    }
+
+    .eng-grid__core {
+      grid-column: 2;
+      grid-row: 1 / 4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    @media (max-width: 1100px) {
+      .eng-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        height: auto;
+      }
+      .eng-grid__core {
+        grid-column: 1 / -1;
+        grid-row: auto;
+      }
+    }
+
+    /* EPS conduit line */
+    .eps-line {
+      display: flex;
+      align-items: center;
+      gap: var(--ml-space-sm);
+      padding: var(--ml-space-xs) 0;
+    }
+
+    .eps-line__label {
+      width: 80px;
+      font-family: var(--ml-font-mono);
+      font-size: var(--ml-text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ml-text-muted);
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .eps-line__bar {
+      flex: 1;
+      height: 8px;
+      background: var(--ml-overlay);
+      border-radius: var(--ml-radius-pill);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .eps-line__fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--ml-gold), var(--ml-amber));
+      transition: width var(--ml-duration-slow) var(--ml-ease-out);
+      position: relative;
+    }
+
+    .eps-line__fill::after {
+      content: '';
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 30px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2));
+    }
+
+    .eps-line__value {
+      width: 40px;
+      font-family: var(--ml-font-mono);
+      font-size: var(--ml-text-xs);
+      color: var(--ml-gold);
+      font-feature-settings: "tnum" 1;
+      flex-shrink: 0;
+    }
+
+    /* Nacelle temperature rings */
+    .nacelle-temp {
+      display: flex;
+      gap: var(--ml-space-lg);
+      justify-content: center;
+    }
+
+    .nacelle-temp__unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--ml-space-xs);
+    }
+
+    .nacelle-temp__label {
+      font-family: var(--ml-font-mono);
+      font-size: var(--ml-text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ml-text-muted);
+    }
+
+    .warp-field-viz {
+      position: relative;
+      width: 100%;
+      height: 80px;
+      background: var(--ml-deep);
+      border: 1px solid rgba(86, 227, 227, 0.1);
+      border-radius: var(--ml-radius-sm);
+      overflow: hidden;
+    }
+
+    .warp-field-viz__wave {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .warp-field-viz__wave path {
+      fill: none;
+      stroke-width: 1.5;
+      opacity: 0.6;
+    }
+
+    .warp-field-viz__wave path:nth-child(1) { stroke: var(--ml-cyan); }
+    .warp-field-viz__wave path:nth-child(2) { stroke: var(--ml-ice); opacity: 0.4; }
+    .warp-field-viz__wave path:nth-child(3) { stroke: var(--ml-violet); opacity: 0.3; }
+  </style>
+</head>
+<body data-condition="green">
+  <div class="ml-app">
+    <!-- Sidebar -->
+    <div class="ml-app__sidebar">
+      <div class="ml-sidebar ml-sidebar--wide ml-stagger">
+        <div class="ml-sidebar__block ml-sidebar__block--gold ml-animate-right" style="flex:3">MAIN ENG</div>
+        <div class="ml-sidebar__block ml-sidebar__block--amber ml-animate-right" style="flex:2">EPS GRID</div>
+        <div class="ml-sidebar__block ml-sidebar__block--cyan ml-animate-right" style="flex:2">WARP SYS</div>
+        <div class="ml-sidebar__block ml-sidebar__block--ice ml-animate-right" style="flex:1">IMPULSE</div>
+        <div class="ml-sidebar__block ml-sidebar__block--violet ml-animate-right" style="flex:1">DEFLECTOR</div>
+        <div class="ml-sidebar__block ml-sidebar__block--mint ml-animate-right" style="flex:1">ENV CTRL</div>
+        <div class="ml-sidebar__block ml-sidebar__block--tangerine ml-animate-right" style="flex:1">DAMAGE</div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-app__main">
+      <!-- Header -->
+      <div class="ml-header ml-animate-fade">
+        <div class="ml-header__pill-left">
+          <span style="font-family:var(--ml-font-mono);font-size:var(--ml-text-xs);color:var(--ml-void);letter-spacing:0.1em">ENG</span>
+        </div>
+        <div class="ml-header__body">
+          <span class="ml-header__title">Main Engineering</span>
+          <span class="ml-header__subtitle">USS Titan // Deck 11-16</span>
+          <div style="margin-left:auto;display:flex;gap:var(--ml-space-sm);align-items:center">
+            <span class="ml-condition-badge" id="condBadge">Condition Green</span>
+            <span class="ml-badge ml-badge--gold">Chief Engineer On Watch</span>
+          </div>
+        </div>
+        <div class="ml-header__pill-right"></div>
+      </div>
+
+      <!-- Engineering Grid -->
+      <div class="ml-app__content">
+        <div class="eng-grid ml-stagger">
+
+          <!-- LEFT: Power Distribution -->
+          <div class="ml-flex-col ml-gap-md" style="grid-row: 1 / 3">
+            <div class="ml-panel ml-animate-up" data-accent="gold">
+              <div class="ml-panel__title">Power Distribution</div>
+              <div class="ml-flex ml-gap-sm ml-mb-md">
+                <div class="ml-stat-card ml-flex-1" data-accent="gold">
+                  <span class="ml-stat-card__label">Total Output</span>
+                  <span class="ml-stat-card__value" id="totalPower">4.2</span>
+                  <span class="ml-stat-card__trend ml-stat-card__trend--up">TW/s</span>
+                </div>
+                <div class="ml-stat-card ml-flex-1" data-accent="amber">
+                  <span class="ml-stat-card__label">Efficiency</span>
+                  <span class="ml-stat-card__value" id="efficiency">97.8</span>
+                  <span class="ml-stat-card__trend ml-stat-card__trend--up">%</span>
+                </div>
+              </div>
+              <div id="epsGrid">
+                <!-- EPS lines generated by JS -->
+              </div>
+            </div>
+
+            <div class="ml-panel ml-animate-up" data-accent="amber">
+              <div class="ml-panel__title">EPS Conduit Flow</div>
+              <div class="ml-power-flow ml-mb-sm">
+                <div class="ml-power-flow__pulse"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between">
+                <span class="ml-label" style="font-size:9px">Core Output</span>
+                <span class="ml-label" style="font-size:9px">Primary Bus</span>
+              </div>
+              <div class="ml-divider"></div>
+              <div class="ml-stat"><span class="ml-stat__label">Primary EPS</span><span class="ml-stat__value ml-stat__value--up">Nominal</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Secondary EPS</span><span class="ml-stat__value ml-stat__value--up">Standby</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Emergency Bus</span><span class="ml-stat__value">Offline</span></div>
+            </div>
+          </div>
+
+          <!-- CENTER: Warp Core -->
+          <div class="eng-grid__core ml-animate-up">
+            <div class="ml-panel ml-h-full ml-w-full" data-accent="cyan" style="display:flex;flex-direction:column;align-items:center">
+              <div class="ml-panel__title ml-w-full">Warp Core</div>
+              <div class="ml-warp-core" style="flex:1">
+                <div class="ml-warp-core__value" id="coreOutput">1,274</div>
+                <div class="ml-warp-core__status">Cochranes</div>
+                <div class="ml-warp-core__column" id="coreColumn">
+                  <div class="ml-warp-core__ring"></div>
+                  <div class="ml-warp-core__ring"></div>
+                  <div class="ml-warp-core__ring"></div>
+                  <div class="ml-warp-core__ring"></div>
+                </div>
+                <div class="ml-warp-core__status">Intermix Ratio</div>
+                <div class="ml-warp-core__value" id="intermix" style="font-size:var(--ml-text-lg)">1:1</div>
+              </div>
+              <div class="ml-divider ml-w-full"></div>
+              <div class="ml-diagnostic ml-w-full" style="margin-top:var(--ml-space-sm)">
+                <div class="ml-diagnostic__row">
+                  <div class="ml-diagnostic__indicator" data-level="nominal"></div>
+                  <span class="ml-diagnostic__system">Matter Injector</span>
+                  <span class="ml-diagnostic__status" data-level="nominal">Nominal</span>
+                </div>
+                <div class="ml-diagnostic__row">
+                  <div class="ml-diagnostic__indicator" data-level="nominal"></div>
+                  <span class="ml-diagnostic__system">Antimatter Injector</span>
+                  <span class="ml-diagnostic__status" data-level="nominal">Nominal</span>
+                </div>
+                <div class="ml-diagnostic__row">
+                  <div class="ml-diagnostic__indicator" data-level="nominal"></div>
+                  <span class="ml-diagnostic__system">Dilithium Matrix</span>
+                  <span class="ml-diagnostic__status" data-level="nominal">98.6%</span>
+                </div>
+                <div class="ml-diagnostic__row">
+                  <div class="ml-diagnostic__indicator" data-level="advisory"></div>
+                  <span class="ml-diagnostic__system">Plasma Manifold</span>
+                  <span class="ml-diagnostic__status" data-level="advisory">Advisory</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: Propulsion & Warp Field -->
+          <div class="ml-flex-col ml-gap-md" style="grid-row: 1 / 3">
+            <div class="ml-panel ml-animate-up" data-accent="ice">
+              <div class="ml-panel__title">Nacelle Status</div>
+              <div class="nacelle-temp ml-mb-md">
+                <div class="nacelle-temp__unit">
+                  <div class="ml-gauge ml-gauge--sm ml-gauge--cyan">
+                    <div class="ml-gauge__ring">
+                      <svg viewBox="0 0 120 120">
+                        <circle class="ml-gauge__track" cx="60" cy="60" r="50"/>
+                        <circle class="ml-gauge__fill" cx="60" cy="60" r="50"
+                          style="stroke-dashoffset:15.71" id="portNacelle"/>
+                      </svg>
+                      <div class="ml-gauge__value">
+                        <span class="ml-gauge__number" id="portTemp">95</span>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="nacelle-temp__label">Port</span>
+                </div>
+                <div class="nacelle-temp__unit">
+                  <div class="ml-gauge ml-gauge--sm ml-gauge--cyan">
+                    <div class="ml-gauge__ring">
+                      <svg viewBox="0 0 120 120">
+                        <circle class="ml-gauge__track" cx="60" cy="60" r="50"/>
+                        <circle class="ml-gauge__fill" cx="60" cy="60" r="50"
+                          style="stroke-dashoffset:18.85" id="stbdNacelle"/>
+                      </svg>
+                      <div class="ml-gauge__value">
+                        <span class="ml-gauge__number" id="stbdTemp">94</span>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="nacelle-temp__label">Starboard</span>
+                </div>
+              </div>
+              <div class="ml-stat"><span class="ml-stat__label">Field Geometry</span><span class="ml-stat__value ml-stat__value--up" id="fieldGeo">Stable</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Plasma Temp</span><span class="ml-stat__value" id="plasmaTempVal">2.14M°K</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Coil Alignment</span><span class="ml-stat__value ml-stat__value--up">99.97%</span></div>
+            </div>
+
+            <div class="ml-panel ml-animate-up" data-accent="violet">
+              <div class="ml-panel__title">Warp Field Analysis</div>
+              <div class="warp-field-viz ml-mb-sm">
+                <svg class="warp-field-viz__wave" viewBox="0 0 400 80" preserveAspectRatio="none">
+                  <path d="M0,40 Q50,10 100,40 Q150,70 200,40 Q250,10 300,40 Q350,70 400,40"/>
+                  <path d="M0,40 Q50,20 100,40 Q150,60 200,40 Q250,20 300,40 Q350,60 400,40"/>
+                  <path d="M0,40 Q50,30 100,40 Q150,50 200,40 Q250,30 300,40 Q350,50 400,40"/>
+                </svg>
+              </div>
+              <div class="ml-stat"><span class="ml-stat__label">Subspace Stress</span><span class="ml-stat__value" id="subspaceStress">0.42</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Field Symmetry</span><span class="ml-stat__value ml-stat__value--up" id="fieldSymmetry">99.8%</span></div>
+              <div class="ml-stat"><span class="ml-stat__label">Cochrane Variance</span><span class="ml-stat__value" id="cochraneVar">±0.003</span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Bottom: Diagnostic & Sensor Log -->
+        <div class="ml-grid ml-grid--2 ml-mt-md ml-stagger">
+          <div class="ml-panel ml-animate-up" data-accent="mint">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--ml-space-md)">
+              <h4 style="color:var(--ml-mint);margin:0">System Diagnostics</h4>
+              <span class="ml-badge ml-badge--mint">Level 5 Running</span>
+            </div>
+            <div class="ml-diagnostic" id="diagnosticsList">
+              <!-- Generated by JS -->
+            </div>
+          </div>
+
+          <div class="ml-panel ml-animate-up" data-accent="gold">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--ml-space-md)">
+              <h4 style="color:var(--ml-gold);margin:0">Engineering Log</h4>
+              <span class="ml-tag" id="engLogCount">4 entries</span>
+            </div>
+            <div class="ml-timeline" id="engTimeline">
+              <!-- Generated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── EPS Grid Lines ──────────────────────────────────────
+    const epsLines = [
+      { label: 'Warp Drive', pct: 97, color: 'cyan' },
+      { label: 'Impulse', pct: 62, color: 'ice' },
+      { label: 'Shields', pct: 45, color: 'amber' },
+      { label: 'Weapons', pct: 30, color: 'tangerine' },
+      { label: 'Sensors', pct: 52, color: 'violet' },
+      { label: 'Life Supp', pct: 88, color: 'mint' },
+      { label: 'Comms', pct: 15, color: 'peach' },
+      { label: 'Reserve', pct: 78, color: 'gold' },
+    ];
+
+    function initEPS() {
+      const container = document.getElementById('epsGrid');
+      epsLines.forEach(line => {
+        const el = document.createElement('div');
+        el.className = 'eps-line';
+        el.innerHTML = `
+          <span class="eps-line__label">${line.label}</span>
+          <div class="eps-line__bar">
+            <div class="eps-line__fill" style="width:${line.pct}%;background:linear-gradient(90deg, var(--ml-${line.color}), var(--ml-${line.color}))"></div>
+          </div>
+          <span class="eps-line__value">${line.pct}%</span>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    // ── Diagnostics ─────────────────────────────────────────
+    const diagnostics = [
+      { system: 'Warp Core Assembly', level: 'nominal', status: 'Nominal' },
+      { system: 'EPS Power Grid', level: 'nominal', status: 'Nominal' },
+      { system: 'Impulse Reactors', level: 'nominal', status: 'Nominal' },
+      { system: 'Shield Generators', level: 'nominal', status: 'Nominal' },
+      { system: 'Structural Integrity', level: 'nominal', status: '99.7%' },
+      { system: 'Deflector Array', level: 'advisory', status: 'Advisory' },
+      { system: 'Plasma Manifold 7-B', level: 'advisory', status: 'Rebalancing' },
+      { system: 'Holodeck Matrix 3', level: 'offline', status: 'Offline' },
+    ];
+
+    function initDiagnostics() {
+      const container = document.getElementById('diagnosticsList');
+      diagnostics.forEach(d => {
+        const row = document.createElement('div');
+        row.className = 'ml-diagnostic__row';
+        row.innerHTML = `
+          <div class="ml-diagnostic__indicator" data-level="${d.level}"></div>
+          <span class="ml-diagnostic__system">${d.system}</span>
+          <span class="ml-diagnostic__status" data-level="${d.level}">${d.status}</span>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    // ── Timeline ────────────────────────────────────────────
+    const engEvents = [
+      { time: '15:22', title: 'Dilithium matrix recrystallization — 98.6% efficiency', type: 'ok' },
+      { time: '15:10', title: 'Plasma manifold 7-B pressure variance detected', type: 'warning', detail: 'Auto-rebalancing initiated — ETA 12 minutes' },
+      { time: '14:58', title: 'Level 5 diagnostic initiated on all primary systems', type: 'info' },
+      { time: '14:45', title: 'EPS conduit 22-gamma maintenance complete', type: 'ok' },
+    ];
+
+    function initTimeline() {
+      const tl = document.getElementById('engTimeline');
+      engEvents.forEach(e => {
+        const item = document.createElement('div');
+        item.className = 'ml-timeline__item ml-animate-fade';
+        item.innerHTML = `
+          <div class="ml-timeline__dot ml-timeline__dot--${e.type}"></div>
+          <div class="ml-timeline__time">${e.time}</div>
+          <div class="ml-timeline__title">${e.title}</div>
+          ${e.detail ? `<div class="ml-timeline__detail">${e.detail}</div>` : ''}
+        `;
+        tl.appendChild(item);
+      });
+    }
+
+    // ── Live Updates ────────────────────────────────────────
+    function fluctuate(base, range) {
+      return (base + (Math.random() - 0.5) * range).toFixed(1);
+    }
+
+    function updateReadings() {
+      document.getElementById('totalPower').textContent = fluctuate(4.2, 0.2);
+      document.getElementById('efficiency').textContent = fluctuate(97.8, 0.8);
+      document.getElementById('coreOutput').textContent = Math.round(1274 + (Math.random() - 0.5) * 20).toLocaleString();
+      document.getElementById('plasmaTempVal').textContent = fluctuate(2.14, 0.04) + 'M°K';
+      document.getElementById('subspaceStress').textContent = fluctuate(0.42, 0.06);
+      document.getElementById('fieldSymmetry').textContent = fluctuate(99.8, 0.2) + '%';
+      document.getElementById('cochraneVar').textContent = '±' + (Math.random() * 0.006).toFixed(3);
+
+      const portTemp = Math.round(93 + Math.random() * 4);
+      const stbdTemp = Math.round(92 + Math.random() * 5);
+      document.getElementById('portTemp').textContent = portTemp;
+      document.getElementById('stbdTemp').textContent = stbdTemp;
+      document.getElementById('portNacelle').style.strokeDashoffset = 314.16 * (1 - portTemp / 100);
+      document.getElementById('stbdNacelle').style.strokeDashoffset = 314.16 * (1 - stbdTemp / 100);
+    }
+
+    // ── Init ────────────────────────────────────────────────
+    initEPS();
+    initDiagnostics();
+    initTimeline();
+    setInterval(updateReadings, 3000);
+  </script>
+</body>
+</html>
