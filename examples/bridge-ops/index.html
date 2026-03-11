@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern LCARS — Bridge Operations</title>
+  <link rel="stylesheet" href="../../src/css/modern-lcars.css">
+  <style>
+    /* Bridge-specific layout */
+    .bridge-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      grid-template-rows: auto auto 1fr;
+      gap: var(--ml-space-md);
+      height: calc(100vh - 100px);
+      min-height: 600px;
+    }
+
+    .bridge-grid__center-readout {
+      grid-column: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--ml-space-2xl);
+    }
+
+    .bridge-grid__tactical {
+      grid-column: 2;
+      grid-row: 2 / 4;
+    }
+
+    @media (max-width: 1100px) {
+      .bridge-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto auto;
+        height: auto;
+      }
+      .bridge-grid__center-readout { grid-column: 1 / -1; }
+      .bridge-grid__tactical { grid-column: 1 / -1; grid-row: auto; }
+    }
+
+    /* Heading display */
+    .heading-compass {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 1px solid rgba(118, 199, 240, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .heading-compass__needle {
+      width: 2px;
+      height: 40px;
+      background: linear-gradient(180deg, var(--ml-ice), transparent);
+      transform-origin: bottom center;
+      position: absolute;
+      bottom: 50%;
+      transition: transform var(--ml-duration-med) var(--ml-ease-out);
+    }
+
+    .heading-compass__marks {
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+    }
+
+    .heading-compass__mark {
+      position: absolute;
+      width: 1px;
+      height: 6px;
+      background: rgba(118, 199, 240, 0.3);
+      top: 0;
+      left: 50%;
+      transform-origin: 0 50px;
+    }
+
+    .heading-compass__cardinal {
+      position: absolute;
+      font-family: var(--ml-font-mono);
+      font-size: 8px;
+      color: var(--ml-text-dim);
+      letter-spacing: 0.05em;
+    }
+
+    .heading-compass__cardinal--n { top: 8px; left: 50%; transform: translateX(-50%); }
+    .heading-compass__cardinal--s { bottom: 8px; left: 50%; transform: translateX(-50%); }
+    .heading-compass__cardinal--e { right: 8px; top: 50%; transform: translateY(-50%); }
+    .heading-compass__cardinal--w { left: 8px; top: 50%; transform: translateY(-50%); }
+
+    /* Shield quadrants visualization */
+    .shield-viz {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      margin: 0 auto var(--ml-space-md);
+    }
+
+    .shield-arc {
+      position: absolute;
+      border: 3px solid var(--ml-mint);
+      transition: border-color var(--ml-duration-med) var(--ml-ease-out),
+                  box-shadow var(--ml-duration-med) var(--ml-ease-out);
+    }
+
+    .shield-arc--fore {
+      top: 0; left: 20%; right: 20%;
+      height: 40%;
+      border-bottom: none;
+      border-radius: 50% 50% 0 0;
+      box-shadow: 0 -4px 12px rgba(128, 255, 219, 0.15);
+    }
+
+    .shield-arc--aft {
+      bottom: 0; left: 20%; right: 20%;
+      height: 40%;
+      border-top: none;
+      border-radius: 0 0 50% 50%;
+      box-shadow: 0 4px 12px rgba(128, 255, 219, 0.15);
+    }
+
+    .shield-arc--port {
+      left: 0; top: 20%; bottom: 20%;
+      width: 40%;
+      border-right: none;
+      border-radius: 50% 0 0 50%;
+      box-shadow: -4px 0 12px rgba(128, 255, 219, 0.15);
+    }
+
+    .shield-arc--stbd {
+      right: 0; top: 20%; bottom: 20%;
+      width: 40%;
+      border-left: none;
+      border-radius: 0 50% 50% 0;
+      box-shadow: 4px 0 12px rgba(128, 255, 219, 0.15);
+    }
+
+    .shield-center-dot {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 8px; height: 8px;
+      margin: -4px;
+      background: var(--ml-ice);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--ml-ice);
+    }
+
+    /* Gauge row layout */
+    .gauge-row {
+      display: flex;
+      justify-content: space-around;
+      gap: var(--ml-space-sm);
+      flex-wrap: wrap;
+    }
+
+    /* Condition switcher */
+    .condition-switcher {
+      display: flex;
+      gap: var(--ml-space-xs);
+    }
+
+    .condition-switcher button {
+      padding: var(--ml-space-xs) var(--ml-space-md);
+      font-family: var(--ml-font-mono);
+      font-size: var(--ml-text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border: 1px solid var(--ml-overlay);
+      border-radius: var(--ml-radius-pill);
+      background: var(--ml-deep);
+      color: var(--ml-text-muted);
+      cursor: pointer;
+      transition: all var(--ml-duration-fast) var(--ml-ease-out);
+    }
+
+    .condition-switcher button:hover {
+      border-color: var(--ml-text-muted);
+      color: var(--ml-text);
+    }
+
+    .condition-switcher button.active {
+      color: var(--ml-void);
+      font-weight: 600;
+    }
+
+    .condition-switcher button[data-cond="green"].active {
+      background: var(--ml-mint);
+      border-color: var(--ml-mint);
+    }
+
+    .condition-switcher button[data-cond="yellow"].active {
+      background: var(--ml-gold);
+      border-color: var(--ml-gold);
+    }
+
+    .condition-switcher button[data-cond="red"].active {
+      background: var(--ml-coral);
+      border-color: var(--ml-coral);
+    }
+
+    /* Mini tactical display */
+    .mini-tactical {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--ml-deep);
+      border: 1px solid rgba(118, 199, 240, 0.12);
+      overflow: hidden;
+    }
+
+    .mini-tactical__ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(118, 199, 240, 0.06);
+    }
+
+    .mini-tactical__ring--1 { inset: 25%; }
+    .mini-tactical__ring--2 { inset: 50%; }
+
+    .mini-tactical__crosshair {
+      position: absolute;
+      background: rgba(118, 199, 240, 0.05);
+    }
+
+    .mini-tactical__crosshair--h {
+      left: 0; right: 0;
+      top: calc(50% - 0.5px);
+      height: 1px;
+    }
+
+    .mini-tactical__crosshair--v {
+      top: 0; bottom: 0;
+      left: calc(50% - 0.5px);
+      width: 1px;
+    }
+
+    .mini-tactical__sweep {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 50%; height: 1px;
+      background: linear-gradient(90deg, var(--ml-ice), transparent);
+      transform-origin: left center;
+      animation: ml-rotate 6s linear infinite;
+      opacity: 0.5;
+    }
+
+    .mini-tactical__center {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 6px; height: 6px;
+      margin: -3px;
+      background: var(--ml-ice);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--ml-ice);
+      z-index: 2;
+    }
+
+    .mini-tactical__blip {
+      position: absolute;
+      width: 5px; height: 5px;
+      margin: -2.5px;
+      border-radius: 50%;
+      z-index: 2;
+    }
+
+    .mini-tactical__blip--friendly {
+      background: var(--ml-mint);
+      box-shadow: 0 0 4px var(--ml-mint);
+    }
+
+    .mini-tactical__blip--hostile {
+      background: var(--ml-coral);
+      box-shadow: 0 0 4px var(--ml-coral);
+      animation: ml-blink 1s ease-in-out infinite;
+    }
+
+    .mini-tactical__blip--unknown {
+      background: var(--ml-gold);
+      box-shadow: 0 0 4px var(--ml-gold);
+      border-radius: 0;
+      transform: rotate(45deg);
+    }
+
+    /* Deck status mini bars */
+    .deck-status {
+      display: flex;
+      gap: 2px;
+      height: 16px;
+    }
+
+    .deck-bar {
+      flex: 1;
+      border-radius: 2px;
+      transition: background var(--ml-duration-fast) var(--ml-ease-out);
+    }
+
+    .deck-bar--ok      { background: var(--ml-mint); opacity: 0.6; }
+    .deck-bar--caution { background: var(--ml-gold); opacity: 0.7; }
+    .deck-bar--alert   { background: var(--ml-coral); opacity: 0.8; }
+    .deck-bar--offline { background: var(--ml-text-dim); opacity: 0.2; }
+  </style>
+</head>
+<body data-condition="green">
+  <div class="ml-app">
+    <!-- Sidebar -->
+    <div class="ml-app__sidebar">
+      <div class="ml-sidebar ml-stagger">
+        <div class="ml-sidebar__block ml-sidebar__block--amber ml-animate-right" style="flex:2">CMD</div>
+        <div class="ml-sidebar__block ml-sidebar__block--ice ml-animate-right" style="flex:3">TAC</div>
+        <div class="ml-sidebar__block ml-sidebar__block--cyan ml-animate-right" style="flex:2">OPS</div>
+        <div class="ml-sidebar__block ml-sidebar__block--violet ml-animate-right" style="flex:1">SCI</div>
+        <div class="ml-sidebar__block ml-sidebar__block--gold ml-animate-right" style="flex:2">ENG</div>
+        <div class="ml-sidebar__block ml-sidebar__block--mint ml-animate-right" style="flex:1">ENV</div>
+        <div class="ml-sidebar__block ml-sidebar__block--peach ml-animate-right" style="flex:1">COM</div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-app__main">
+      <!-- Header -->
+      <div class="ml-header ml-animate-fade">
+        <div class="ml-header__pill-left">
+          <span style="font-family:var(--ml-font-mono);font-size:var(--ml-text-xs);color:var(--ml-void);letter-spacing:0.1em" id="stardate">51247.5</span>
+        </div>
+        <div class="ml-header__body">
+          <span class="ml-header__title">Bridge Operations</span>
+          <span class="ml-header__subtitle">USS Titan // NCC-80102-A</span>
+          <div style="margin-left:auto;display:flex;gap:var(--ml-space-sm);align-items:center">
+            <span class="ml-condition-badge" id="condBadge">Condition Green</span>
+            <div class="condition-switcher">
+              <button data-cond="green" class="active" onclick="setCondition('green')">GRN</button>
+              <button data-cond="yellow" onclick="setCondition('yellow')">YEL</button>
+              <button data-cond="red" onclick="setCondition('red')">RED</button>
+            </div>
+          </div>
+        </div>
+        <div class="ml-header__pill-right"></div>
+      </div>
+
+      <!-- Bridge Content -->
+      <div class="ml-app__content ml-stagger">
+        <div class="bridge-grid">
+
+          <!-- LEFT: Ship Status -->
+          <div class="ml-panel ml-animate-up" data-accent="amber" style="grid-row: 1 / 3">
+            <h4 class="ml-mb-md" style="color:var(--ml-amber)">Ship Status</h4>
+
+            <!-- Shield viz -->
+            <div class="shield-viz">
+              <div class="shield-arc shield-arc--fore" id="shieldFore"></div>
+              <div class="shield-arc shield-arc--aft" id="shieldAft"></div>
+              <div class="shield-arc shield-arc--port" id="shieldPort"></div>
+              <div class="shield-arc shield-arc--stbd" id="shieldStbd"></div>
+              <div class="shield-center-dot"></div>
+            </div>
+
+            <div class="ml-stat">
+              <span class="ml-stat__label">Shields</span>
+              <span class="ml-stat__value ml-stat__value--up" id="shieldPct">100%</span>
+            </div>
+
+            <div class="ml-divider"></div>
+
+            <div class="ml-stat">
+              <span class="ml-stat__label">Hull Integrity</span>
+              <span class="ml-stat__value ml-stat__value--up" id="hull">100%</span>
+            </div>
+            <div class="ml-stat">
+              <span class="ml-stat__label">Structural</span>
+              <span class="ml-stat__value ml-stat__value--up">Nominal</span>
+            </div>
+
+            <div class="ml-divider"></div>
+            <div class="ml-label ml-mb-sm">Deck Status</div>
+            <div class="deck-status ml-mb-sm" id="deckStatus">
+              <!-- Generated by JS -->
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span class="ml-label" style="font-size:9px">Deck 1</span>
+              <span class="ml-label" style="font-size:9px">Deck 16</span>
+            </div>
+          </div>
+
+          <!-- CENTER TOP: Nav Readout -->
+          <div class="bridge-grid__center-readout ml-animate-up">
+            <div class="ml-readout ml-readout--ice">
+              <span class="ml-readout__label">Speed</span>
+              <span class="ml-readout__value" id="warpSpeed">6.2</span>
+              <span class="ml-readout__unit">Warp Factor</span>
+            </div>
+            <div>
+              <div class="heading-compass" id="compass">
+                <div class="heading-compass__needle" id="compassNeedle" style="transform:rotate(127deg)"></div>
+                <div class="heading-compass__cardinal heading-compass__cardinal--n">000</div>
+                <div class="heading-compass__cardinal heading-compass__cardinal--e">090</div>
+                <div class="heading-compass__cardinal heading-compass__cardinal--s">180</div>
+                <div class="heading-compass__cardinal heading-compass__cardinal--w">270</div>
+                <div class="shield-center-dot"></div>
+              </div>
+              <div style="text-align:center;margin-top:var(--ml-space-sm)">
+                <span class="ml-label">Heading</span><br>
+                <span class="ml-value" id="heading">127 mark 4</span>
+              </div>
+            </div>
+            <div class="ml-readout ml-readout--amber">
+              <span class="ml-readout__label">ETA</span>
+              <span class="ml-readout__value" id="eta" style="font-size:2.5rem">3:42</span>
+              <span class="ml-readout__unit">Hours to Starbase 12</span>
+            </div>
+          </div>
+
+          <!-- CENTER: Tactical Overlay -->
+          <div class="bridge-grid__tactical ml-panel ml-animate-up" data-accent="ice" style="padding:var(--ml-space-md)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--ml-space-sm)">
+              <h4 style="color:var(--ml-ice);margin:0">Tactical Overview</h4>
+              <div style="display:flex;gap:var(--ml-space-sm);align-items:center">
+                <span class="ml-tag">Range: 5 LY</span>
+                <span class="ml-badge ml-badge--mint">3 Contacts</span>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr auto;gap:var(--ml-space-md);align-items:start">
+              <div class="mini-tactical" id="tacticalDisplay">
+                <div class="mini-tactical__ring mini-tactical__ring--1"></div>
+                <div class="mini-tactical__ring mini-tactical__ring--2"></div>
+                <div class="mini-tactical__crosshair mini-tactical__crosshair--h"></div>
+                <div class="mini-tactical__crosshair mini-tactical__crosshair--v"></div>
+                <div class="mini-tactical__sweep"></div>
+                <div class="mini-tactical__center"></div>
+                <!-- Contacts -->
+                <div class="mini-tactical__blip mini-tactical__blip--friendly" style="top:35%;left:62%" title="USS Zheng He"></div>
+                <div class="mini-tactical__blip mini-tactical__blip--friendly" style="top:28%;left:40%" title="USS Nog"></div>
+                <div class="mini-tactical__blip mini-tactical__blip--unknown" style="top:72%;left:30%" title="Unknown Vessel"></div>
+              </div>
+              <div style="min-width:180px">
+                <div class="ml-label ml-mb-sm">Contacts</div>
+                <div class="ml-stat"><span class="ml-stat__label">USS Zheng He</span><span class="ml-stat__value" style="color:var(--ml-mint);font-size:var(--ml-text-xs)">Friendly</span></div>
+                <div class="ml-stat"><span class="ml-stat__label">USS Nog</span><span class="ml-stat__value" style="color:var(--ml-mint);font-size:var(--ml-text-xs)">Friendly</span></div>
+                <div class="ml-stat"><span class="ml-stat__label">Unknown</span><span class="ml-stat__value" style="color:var(--ml-gold);font-size:var(--ml-text-xs)">Analyzing</span></div>
+                <div class="ml-divider"></div>
+                <div class="ml-stat"><span class="ml-stat__label">Weapons</span><span class="ml-stat__value ml-stat__value--up" style="font-size:var(--ml-text-xs)">Ready</span></div>
+                <div class="ml-stat"><span class="ml-stat__label">Torpedoes</span><span class="ml-stat__value" style="font-size:var(--ml-text-xs)">248</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT TOP: Power -->
+          <div class="ml-panel ml-animate-up" data-accent="gold">
+            <h4 class="ml-mb-md" style="color:var(--ml-gold)">Power Systems</h4>
+            <div class="gauge-row">
+              <div class="ml-gauge ml-gauge--sm">
+                <div class="ml-gauge__ring">
+                  <svg viewBox="0 0 120 120">
+                    <circle class="ml-gauge__track" cx="60" cy="60" r="50"/>
+                    <circle class="ml-gauge__fill" cx="60" cy="60" r="50"
+                      data-level="high" id="gaugeWarp"
+                      style="stroke-dashoffset:9.42"/>
+                  </svg>
+                  <div class="ml-gauge__value">
+                    <span class="ml-gauge__number" id="gaugeWarpVal">97</span>
+                  </div>
+                </div>
+                <span class="ml-gauge__label">Warp</span>
+              </div>
+              <div class="ml-gauge ml-gauge--sm ml-gauge--ice">
+                <div class="ml-gauge__ring">
+                  <svg viewBox="0 0 120 120">
+                    <circle class="ml-gauge__track" cx="60" cy="60" r="50"/>
+                    <circle class="ml-gauge__fill" cx="60" cy="60" r="50"
+                      style="stroke-dashoffset:62.83" id="gaugeImpulse"/>
+                  </svg>
+                  <div class="ml-gauge__value">
+                    <span class="ml-gauge__number" id="gaugeImpulseVal">80</span>
+                  </div>
+                </div>
+                <span class="ml-gauge__label">Impulse</span>
+              </div>
+            </div>
+            <div class="ml-divider"></div>
+            <div class="ml-stat"><span class="ml-stat__label">Main Power</span><span class="ml-stat__value" id="mainPower">98.4%</span></div>
+            <div class="ml-stat"><span class="ml-stat__label">Aux Power</span><span class="ml-stat__value">Standby</span></div>
+            <div class="ml-stat"><span class="ml-stat__label">EPS Grid</span><span class="ml-stat__value ml-stat__value--up">Nominal</span></div>
+          </div>
+
+          <!-- RIGHT BOTTOM: Crew & Comms -->
+          <div class="ml-panel ml-animate-up" data-accent="cyan">
+            <h4 class="ml-mb-sm" style="color:var(--ml-cyan)">Crew & Comms</h4>
+            <div class="ml-stat"><span class="ml-stat__label">Complement</span><span class="ml-stat__value">350</span></div>
+            <div class="ml-stat"><span class="ml-stat__label">On Duty</span><span class="ml-stat__value">118</span></div>
+            <div class="ml-stat"><span class="ml-stat__label">Away Teams</span><span class="ml-stat__value" style="color:var(--ml-cyan)">0</span></div>
+            <div class="ml-divider"></div>
+            <div class="ml-label ml-mb-sm">Active Channels</div>
+            <div style="display:flex;flex-direction:column;gap:var(--ml-space-xs)">
+              <div style="display:flex;align-items:center;gap:var(--ml-space-sm);font-family:var(--ml-font-mono);font-size:var(--ml-text-xs);color:var(--ml-text-muted)">
+                <span class="ml-dot ml-dot--ok"></span>
+                <span style="text-transform:uppercase;letter-spacing:0.06em">Subspace Relay</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:var(--ml-space-sm);font-family:var(--ml-font-mono);font-size:var(--ml-text-xs);color:var(--ml-text-muted)">
+                <span class="ml-dot ml-dot--ok"></span>
+                <span style="text-transform:uppercase;letter-spacing:0.06em">Short Range</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:var(--ml-space-sm);font-family:var(--ml-font-mono);font-size:var(--ml-text-xs);color:var(--ml-text-muted)">
+                <span class="ml-dot ml-dot--warn"></span>
+                <span style="text-transform:uppercase;letter-spacing:0.06em">Emergency Freq</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOTTOM LEFT: Environment -->
+          <div class="ml-panel ml-animate-up" data-accent="mint">
+            <h4 class="ml-mb-sm" style="color:var(--ml-mint)">Environment</h4>
+            <div class="ml-stat"><span class="ml-stat__label">Atmosphere</span><span class="ml-stat__value ml-stat__value--up">Optimal</span></div>
+            <div class="ml-stat"><span class="ml-stat__label">Temp (Avg)</span><span class="ml-stat__value">22.1°C</span></div>
+            <div class="ml-stat"><span class="ml-stat__label">Gravity</span><span class="ml-stat__value">1.00g</span></div>
+            <div class="ml-stat"><span class="ml-stat__label">Radiation</span><span class="ml-stat__value ml-stat__value--up">0.02 mSv</span></div>
+          </div>
+
+        </div>
+
+        <!-- Timeline at bottom -->
+        <div class="ml-panel ml-animate-up ml-mt-md" data-accent="gold">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--ml-space-md)">
+            <h4 style="color:var(--ml-gold);margin:0">Operations Log</h4>
+            <span class="ml-tag" id="logCount">5 entries</span>
+          </div>
+          <div class="ml-timeline" id="timeline">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Condition Switcher ────────────────────────────────────
+    function setCondition(cond) {
+      document.body.setAttribute('data-condition', cond);
+      document.querySelectorAll('.condition-switcher button').forEach(b => b.classList.remove('active'));
+      document.querySelector(`[data-cond="${cond}"]`).classList.add('active');
+
+      const badge = document.getElementById('condBadge');
+      const labels = { green: 'Condition Green', yellow: 'Yellow Alert', red: 'Red Alert' };
+      badge.textContent = labels[cond];
+
+      // Flash all panels on condition change
+      document.querySelectorAll('.ml-panel').forEach(p => {
+        p.classList.add('ml-animate-condition-pulse');
+        setTimeout(() => p.classList.remove('ml-animate-condition-pulse'), 1500);
+      });
+    }
+
+    // ── Deck Status Bars ──────────────────────────────────────
+    function initDeckStatus() {
+      const container = document.getElementById('deckStatus');
+      const statuses = ['ok','ok','ok','ok','ok','ok','ok','ok','ok','ok','caution','ok','ok','ok','ok','ok'];
+      statuses.forEach(s => {
+        const bar = document.createElement('div');
+        bar.className = `deck-bar deck-bar--${s}`;
+        container.appendChild(bar);
+      });
+    }
+
+    // ── Timeline Events ───────────────────────────────────────
+    const events = [
+      { time: '14:47', title: 'Course correction applied — new heading 127 mark 4', type: 'ok' },
+      { time: '14:32', title: 'Long-range sensors: unknown vessel at bearing 215', type: 'warning', detail: 'Classification pending — running database comparison' },
+      { time: '14:28', title: 'USS Zheng He acknowledged — formation confirmed', type: 'info' },
+      { time: '14:15', title: 'Alpha shift rotation complete — all stations manned', type: 'ok' },
+      { time: '14:00', title: 'Warp field geometry nominal — efficiency at 97.2%', type: 'ok' },
+    ];
+
+    function initTimeline() {
+      const tl = document.getElementById('timeline');
+      events.forEach(e => {
+        const item = document.createElement('div');
+        item.className = 'ml-timeline__item ml-animate-fade';
+        item.innerHTML = `
+          <div class="ml-timeline__dot ml-timeline__dot--${e.type}"></div>
+          <div class="ml-timeline__time">${e.time}</div>
+          <div class="ml-timeline__title">${e.title}</div>
+          ${e.detail ? `<div class="ml-timeline__detail">${e.detail}</div>` : ''}
+        `;
+        tl.appendChild(item);
+      });
+    }
+
+    // ── Live Value Updates ────────────────────────────────────
+    function fluctuate(base, range) {
+      return (base + (Math.random() - 0.5) * range).toFixed(1);
+    }
+
+    function updateReadings() {
+      document.getElementById('mainPower').textContent = fluctuate(98.4, 1.5) + '%';
+      document.getElementById('warpSpeed').textContent = fluctuate(6.2, 0.3);
+
+      const h = Math.round(127 + (Math.random() - 0.5) * 2);
+      const m = Math.round(4 + (Math.random() - 0.5) * 1);
+      document.getElementById('heading').textContent = `${h} mark ${m}`;
+      document.getElementById('compassNeedle').style.transform = `rotate(${h}deg)`;
+
+      // Update gauge values
+      const warpEff = Math.round(95 + Math.random() * 4);
+      document.getElementById('gaugeWarpVal').textContent = warpEff;
+      const dashoffset = 314.16 * (1 - warpEff / 100);
+      document.getElementById('gaugeWarp').style.strokeDashoffset = dashoffset;
+    }
+
+    // ── Add New Timeline Entry ────────────────────────────────
+    const logMessages = [
+      { title: 'Routine sensor sweep complete — no anomalies', type: 'ok' },
+      { title: 'EPS conduit 47-alpha: power flow nominal', type: 'info' },
+      { title: 'Shield emitter grid: auto-calibration in progress', type: 'info' },
+      { title: 'Deflector array: phase alignment drift +0.03%', type: 'warning' },
+      { title: 'Warp field geometry: stable', type: 'ok' },
+      { title: 'Nacelle plasma injectors: efficiency at 99.4%', type: 'ok' },
+    ];
+
+    let logCount = 5;
+
+    function addTimelineEntry() {
+      const tl = document.getElementById('timeline');
+      const msg = logMessages[Math.floor(Math.random() * logMessages.length)];
+      const now = new Date();
+      const ts = now.toTimeString().slice(0, 5);
+
+      const item = document.createElement('div');
+      item.className = 'ml-timeline__item ml-animate-fade';
+      item.innerHTML = `
+        <div class="ml-timeline__dot ml-timeline__dot--${msg.type}"></div>
+        <div class="ml-timeline__time">${ts}</div>
+        <div class="ml-timeline__title">${msg.title}</div>
+      `;
+
+      tl.insertBefore(item, tl.firstChild);
+      logCount++;
+      document.getElementById('logCount').textContent = logCount + ' entries';
+
+      // Keep max 12 entries visible
+      while (tl.children.length > 12) {
+        tl.removeChild(tl.lastChild);
+      }
+    }
+
+    // ── Initialize ────────────────────────────────────────────
+    initDeckStatus();
+    initTimeline();
+    setInterval(updateReadings, 3000);
+    setInterval(addTimelineEntry, 6000);
+  </script>
+</body>
+</html>

@@ -235,6 +235,118 @@
   to { transform: rotate(360deg); }
 }
 
+/* ── Power-Up Entrance ─────────────────────────────────────── */
+@keyframes ml-power-up {
+  0%   { clip-path: inset(0 100% 0 0); opacity: 0.3; }
+  60%  { clip-path: inset(0 0% 0 0); opacity: 0.8; }
+  100% { clip-path: inset(0 0% 0 0); opacity: 1; }
+}
+
+.ml-animate-power-up {
+  animation: ml-power-up var(--ml-duration-slow) var(--ml-ease-out) both;
+}
+
+/* ── Warp Streak Effect ────────────────────────────────────── */
+@keyframes ml-warp-streak {
+  0%   { transform: translateX(-100%) scaleX(0.3); opacity: 0; }
+  20%  { opacity: 0.6; }
+  100% { transform: translateX(200vw) scaleX(2); opacity: 0; }
+}
+
+.ml-warp-streaks {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.ml-warp-streaks::before,
+.ml-warp-streaks::after {
+  content: '';
+  position: absolute;
+  height: 1px;
+  width: 120px;
+  background: linear-gradient(90deg, transparent, var(--ml-ice) 40%, var(--ml-cyan));
+  opacity: 0;
+}
+
+.ml-warp-streaks.active::before {
+  top: 30%;
+  animation: ml-warp-streak 1.2s var(--ml-ease-out) both;
+}
+
+.ml-warp-streaks.active::after {
+  top: 65%;
+  animation: ml-warp-streak 1.2s var(--ml-ease-out) 0.15s both;
+}
+
+/* ── Transporter Effect ────────────────────────────────────── */
+@keyframes ml-transporter {
+  0%   { opacity: 0; filter: blur(4px) brightness(2); }
+  30%  { opacity: 0.8; filter: blur(2px) brightness(1.5); }
+  70%  { opacity: 0.9; filter: blur(1px) brightness(1.1); }
+  100% { opacity: 1; filter: blur(0px) brightness(1); }
+}
+
+.ml-animate-transporter {
+  animation: ml-transporter 1.2s var(--ml-ease-out) both;
+}
+
+/* ── Condition Pulse (alert level change) ──────────────────── */
+@keyframes ml-condition-pulse {
+  0%   { box-shadow: 0 0 0 0 var(--ml-condition-glow, rgba(244, 162, 97, 0.3)); }
+  50%  { box-shadow: 0 0 40px 4px var(--ml-condition-glow, rgba(244, 162, 97, 0.3)); }
+  100% { box-shadow: 0 0 0 0 var(--ml-condition-glow, rgba(244, 162, 97, 0)); }
+}
+
+.ml-animate-condition-pulse {
+  animation: ml-condition-pulse 1.5s var(--ml-ease-out) both;
+}
+
+/* ── Energy Flow (horizontal light pulse along a bar) ──────── */
+@keyframes ml-energy-flow {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.ml-energy-flow {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(244, 162, 97, 0.4) 40%,
+    rgba(244, 162, 97, 0.8) 50%,
+    rgba(244, 162, 97, 0.4) 60%,
+    transparent 100%
+  );
+  background-size: 50% 100%;
+  background-repeat: no-repeat;
+  animation: ml-energy-flow 2s linear infinite;
+}
+
+.ml-energy-flow--ice {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(118, 199, 240, 0.4) 40%,
+    rgba(118, 199, 240, 0.8) 50%,
+    rgba(118, 199, 240, 0.4) 60%,
+    transparent 100%
+  );
+}
+
+/* ── Number Tick (value update feedback) ───────────────────── */
+@keyframes ml-tick {
+  0%   { transform: translateY(0); opacity: 1; }
+  40%  { transform: translateY(-6px); opacity: 0; }
+  60%  { transform: translateY(6px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.ml-animate-tick {
+  animation: ml-tick var(--ml-duration-med) var(--ml-ease-out);
+}
+
 /* ── Reduced Motion ────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .ml-animate-fade,
@@ -247,7 +359,17 @@
   .ml-animate-pulse,
   .ml-animate-pulse-ice,
   .ml-animate-blink,
-  .ml-animate-spin {
+  .ml-animate-spin,
+  .ml-animate-power-up,
+  .ml-animate-transporter,
+  .ml-animate-condition-pulse,
+  .ml-animate-tick {
+    animation: none !important;
+  }
+
+  .ml-energy-flow,
+  .ml-warp-streaks::before,
+  .ml-warp-streaks::after {
     animation: none !important;
   }
 
