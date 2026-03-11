@@ -1,0 +1,117 @@
+/* ============================================================
+   MODERN LCARS — Condition / Alert Themes
+   Apply via <body data-condition="green|yellow|red">
+   ============================================================ */
+
+/* ── Condition Green (Normal Operations) ──────────────────── */
+[data-condition="green"] {
+  --ml-condition-color: var(--ml-mint);
+  --ml-condition-glow: rgba(128, 255, 219, 0.15);
+  --ml-condition-bg: rgba(128, 255, 219, 0.02);
+}
+
+/* ── Condition Yellow (Elevated Alert) ────────────────────── */
+[data-condition="yellow"] {
+  --ml-condition-color: var(--ml-gold);
+  --ml-condition-glow: rgba(233, 196, 106, 0.2);
+  --ml-condition-bg: rgba(233, 196, 106, 0.03);
+  --ml-glass-border: rgba(233, 196, 106, 0.16);
+}
+
+[data-condition="yellow"] .ml-header__pill-left,
+[data-condition="yellow"] .ml-header__pill-right {
+  background: var(--ml-gold);
+}
+
+[data-condition="yellow"] .ml-header__body {
+  border-top-color: var(--ml-gold);
+  border-bottom-color: var(--ml-gold);
+}
+
+[data-condition="yellow"] body::before,
+[data-condition="yellow"]::before {
+  background:
+    radial-gradient(ellipse at 15% 20%, rgba(233, 196, 106, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 30%, rgba(233, 196, 106, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(233, 196, 106, 0.03) 0%, transparent 50%);
+}
+
+/* ── Condition Red (Red Alert) ────────────────────────────── */
+[data-condition="red"] {
+  --ml-condition-color: var(--ml-coral);
+  --ml-condition-glow: rgba(255, 107, 107, 0.25);
+  --ml-condition-bg: rgba(255, 107, 107, 0.04);
+  --ml-glass-border: rgba(255, 107, 107, 0.2);
+  --ml-primary: var(--ml-coral);
+  --ml-glow-sm: 0 0 8px rgba(255, 107, 107, 0.15);
+  --ml-glow-md: 0 0 20px rgba(255, 107, 107, 0.2);
+}
+
+[data-condition="red"] .ml-header__pill-left,
+[data-condition="red"] .ml-header__pill-right {
+  background: var(--ml-coral);
+  animation: ml-condition-flash 1.5s ease-in-out infinite;
+}
+
+[data-condition="red"] .ml-header__body {
+  border-top-color: var(--ml-coral);
+  border-bottom-color: var(--ml-coral);
+}
+
+[data-condition="red"] body::before,
+[data-condition="red"]::before {
+  background:
+    radial-gradient(ellipse at 15% 20%, rgba(255, 107, 107, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 30%, rgba(255, 107, 107, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(255, 107, 107, 0.05) 0%, transparent 50%);
+}
+
+[data-condition="red"] .ml-sidebar__block {
+  animation: ml-condition-flash 1.5s ease-in-out infinite;
+}
+
+@keyframes ml-condition-flash {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(0.7); }
+}
+
+/* ── Condition Transition ─────────────────────────────────── */
+/* Smooth transition when switching conditions */
+[data-condition] .ml-header__pill-left,
+[data-condition] .ml-header__pill-right,
+[data-condition] .ml-header__body,
+[data-condition] .ml-panel {
+  transition: border-color var(--ml-duration-slow) var(--ml-ease-out),
+              background var(--ml-duration-slow) var(--ml-ease-out),
+              box-shadow var(--ml-duration-slow) var(--ml-ease-out);
+}
+
+/* ── Condition Badge (auto-colored status indicator) ──────── */
+.ml-condition-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ml-space-xs);
+  padding: 2px var(--ml-space-sm);
+  font-family: var(--ml-font-mono);
+  font-size: var(--ml-text-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--ml-radius-pill);
+  color: var(--ml-void);
+  background: var(--ml-condition-color, var(--ml-mint));
+}
+
+.ml-condition-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ml-void);
+  opacity: 0.5;
+}
+
+[data-condition="red"] .ml-condition-badge::before {
+  animation: ml-blink 1s ease-in-out infinite;
+  opacity: 1;
+}
